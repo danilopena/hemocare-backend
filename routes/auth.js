@@ -5,6 +5,8 @@ const { registerValidation, loginValidation } = require("../validation");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require('crypto')
+const mailer = require('nodemailer')
+
 
 router.post("/register", async (req, res) => {
   const { error } = registerValidation(req.body);
@@ -70,7 +72,39 @@ router.post('/forgotPassword', (req, res, next) => {
       res.json('email not in db')
       
     }else{
-      const token = crypto.
+      const token = crypto.randomBytes(20).toString('hex')
+      console.log(token);
+      user.update({
+        resetPasswordToken: token,
+        resetPasswordExpires: new Date.now() + 360000
+      })
+      const transporter = mailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: `${process.env.EMAIL_ADDRESS}`,
+          pass: `${process.env.EMAIL_PASSWORD}`
+        }
+      })
+      const mailOptions = {
+        from: 'emailderecovery@gmail.com',
+        to: `${email}`,
+        subject: 'Redefinição de senha',
+        text: 'Vc esta recebendo este link porque voce ou outra pessoa requisitou que a senha do email seja resetada'+
+        'Clique no link abaixo ou cole na barra de endereço do browser para completar o processo de redefinição'+
+        'http://localhost:3000/resetPassword/${token}'+
+        'Se você não solicitou essa redefinição, por gentileza ignorar. Sua senha continuará a mesma'
+      }
+      transporter.sendMail(mailOptions, function(err, response){
+        if(err){
+          console.log(err);
+        } else{
+          console.log(response);
+        res.status(200).json('email de recovery enviado')
+        
+        }
+        
+        
+      })
     }
   })
 
