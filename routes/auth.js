@@ -4,9 +4,10 @@ const router = express.Router();
 const { registerValidation, loginValidation } = require("../validation");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const crypto = require('crypto')
-const mailer = require('nodemailer')
-
+const crypto = require("crypto");
+const mailer = require("nodemailer");
+const hbs = require("nodemailer-express-handlebars");
+const path = require("path");
 
 router.post("/register", async (req, res) => {
   const { error } = registerValidation(req.body);
@@ -18,7 +19,7 @@ router.post("/register", async (req, res) => {
   // hash password
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(req.body.password, salt);
-  
+
   //const {name, email,password} = req.body,
 
   //new user
@@ -30,7 +31,7 @@ router.post("/register", async (req, res) => {
   });
   try {
     const savedUser = await user.save();
-    res.send({ user: user._id });
+    res.send({ user: savedUser });
   } catch {
     console.log(err);
     res.status(400).send(err);
@@ -54,61 +55,87 @@ router.post("/login", async (req, res) => {
   res.header("auth-token", token).send(token);
 });
 
-
 // forgot-password
-router.post('/forgotPassword', (req, res, next) => {
-  const {email} = req.body
-  
-  if(email === ''){
-    res.json('email required')
+router.post("/forgotPassword", async (req, res, next) => {
+  const { email } = req.body;
+  console.log(`Email> ${email}`);
+
+  if (email === "") {
+    res.json("email required");
   }
-  User.findOne({
-    where: {
-      email: email
-    }
-  }).then(user => {
-    if(user === null){
-      console.log('email not in database');
-      res.json('email not in db')
-      
-    }else{
-      const token = crypto.randomBytes(20).toString('hex')
-      console.log(token);
-      user.update({
-        resetPasswordToken: token,
-        resetPasswordExpires: new Date.now() + 360000
-      })
-      const transporter = mailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: `${process.env.EMAIL_ADDRESS}`,
-          pass: `${process.env.EMAIL_PASSWORD}`
-        }
-      })
-      const mailOptions = {
-        from: 'emailderecovery@gmail.com',
-        to: `${email}`,
-        subject: 'Redefinição de senha',
-        text: 'Vc esta recebendo este link porque voce ou outra pessoa requisitou que a senha do email seja resetada'+
-        'Clique no link abaixo ou cole na barra de endereço do browser para completar o processo de redefinição'+
-        'http://localhost:3000/resetPassword/${token}'+
-        'Se você não solicitou essa redefinição, por gentileza ignorar. Sua senha continuará a mesma'
-      }
-      transporter.sendMail(mailOptions, function(err, response){
-        if(err){
-          console.log(err);
-        } else{
-          console.log(response);
-        res.status(200).json('email de recovery enviado')
-        
-        }
-        
-        
-      })
-    }
+  await User.findOne({
+    email
   })
+    .select("+resetPasswordToken resetPasswordExpires")
+    .then(user => {
+      //console.log(user);
 
-})
+      if (user === null) {
+        console.log("email not in database");
+        res.json("email not in db");
+      } else {
+        const token = crypto.randomBytes(20).toString("hex");
+        console.log(`Token de recovery eh> ${token}`);
+        user.update({
+          resetPasswordToken: token,
+          resetPasswordExpires: Date.now() + 360000
+        });
+        const transporter = mailer.createTransport({
+          host: process.env.EMAIL_HOST,
+          port: process.env.EMAIL_PORT,
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
+          }
+        });
 
+        const mailOptions = {
+          from: "wsadevv@gmail.com",
+          to: `${email}`,
+          context: { token },
+          subject: "Redefinição de senha",
+          text:
+            "Vc esta recebendo este link porque voce ou outra pessoa requisitou que a senha do email seja resetada" +
+            "Clique no link abaixo ou cole na barra de endereço do browser para completar o processo de redefinição " +
+            `http://localhost:3000/resetPassword/${token}` +
+            " Se você não solicitou essa redefinição, por gentileza ignorar. Sua senha continuará a mesma"
+        };
+        transporter.sendMail(mailOptions, function(err, response) {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log(response);
+            res.status(200).json("email de recovery enviado");
+            next();
+          }
+        });
+      }
+    });
+});
+router.post("/resetPassword", async (req, res) => {
+  const { email, token, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    console.log(user);
+
+    if (!user) return res.status(400).send({ error: "User not found" });
+    if (token !== user.resetPasswordToken) {
+      // it do not records resetToke on mongo db atlas
+      console.log(`Token> ${token} && Reset Token> ${user.resetPasswordToken}`);
+      return res.status(400).send({ error: "INvalid token", user: user });
+    }
+
+    const rightNow = Date.now();
+    if (rightNow > user.resetPasswordExpires)
+      return res
+        .status(400)
+        .send({ error: "Token expired, generate a new one" });
+    user.password = password;
+    await user.save().then(() => res.status(200).send("Yiipie kay ay!"));
+  } catch (error) {
+    res.status(400).send("Not found");
+  }
+});
 
 module.exports = router;
