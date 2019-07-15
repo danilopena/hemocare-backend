@@ -91,7 +91,7 @@ router.post("/resetPassword", async (req, res) => {
     if (token !== user.resetPasswordToken) {
       // it do not records resetToke on mongo db atlas
       console.log(`Token> ${token} && Reset Token> ${user.resetPasswordToken}`);
-      return res.status(400).send({ error: "INvalid token", user: user });
+      return res.status(400).send({ error: "Invalid token" });
     }
 
     const rightNow = Date.now();
