@@ -14,8 +14,8 @@ router.post("/register", async (req, res) => {
   const emailExists = await User.findOne({ email: req.body.email });
   if (emailExists) return res.status(400).send("Email ja existe");
   // hash password
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+  const { password } = req.body;
+  const hashedPassword = await hashPassword(password);
 
   //const {name, email,password} = req.body,
 
@@ -76,34 +76,7 @@ router.post("/forgotPassword", async (req, res, next) => {
       user.save();
 
       // call mail
-      const transporter = mailer.createTransport({
-        host: process.env.EMAIL_HOST,
-        port: process.env.EMAIL_PORT,
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS
-        }
-      });
-
-      const mailOptions = {
-        from: "wsadevv@gmail.com",
-        to: `${email}`,
-        context: { token },
-        subject: "Redefinição de senha",
-        text:
-          "Vc esta recebendo este link porque voce ou outra pessoa requisitou que a senha do email seja resetada" +
-          "Clique no link abaixo ou cole na barra de endereço do browser para completar o processo de redefinição " +
-          `http://localhost:3000/resetPassword/${token}` +
-          " Se você não solicitou essa redefinição, por gentileza ignorar. Sua senha continuará a mesma"
-      };
-      transporter.sendMail(mailOptions, function(err, response) {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log(response);
-          res.status(200).json({ msg: "email de recovery enviado", token });
-        }
-      });
+      sendMail(email, token, res);
     }
   });
 });
@@ -126,13 +99,51 @@ router.post("/resetPassword", async (req, res) => {
       return res
         .status(400)
         .send({ error: "Token expired, generate a new one" });
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-    user.password = hashedPassword;
-    await user.save().then(() => res.status(200).send("Yiipie kay ay!"));
+
+    user.password = await hashPassword(password);
+    await user
+      .save()
+      .then(() =>
+        res.status(200).send({ msg: "User password updated successfuly!" })
+      );
   } catch (error) {
     res.status(400).send("Not found");
   }
 });
+function sendMail(email, token, res) {
+  const transporter = mailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
+    }
+  });
+  const mailOptions = {
+    from: "wsadevv@gmail.com",
+    to: `${email}`,
+    context: { token },
+    subject: "Redefinição de senha",
+    text:
+      "Vc esta recebendo este link porque voce ou outra pessoa requisitou que a senha do email seja resetada" +
+      "Clique no link abaixo ou cole na barra de endereço do browser para completar o processo de redefinição " +
+      `http://localhost:3000/resetPassword/${token}` +
+      " Se você não solicitou essa redefinição, por gentileza ignorar. Sua senha continuará a mesma"
+  };
+  transporter.sendMail(mailOptions, function(err, response) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(response);
+      res.status(200).json({ msg: "email de recovery enviado", token });
+    }
+  });
+}
+
+async function hashPassword(password) {
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+  return hashedPassword;
+}
 
 module.exports = router;
