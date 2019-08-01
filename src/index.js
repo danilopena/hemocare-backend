@@ -16,5 +16,6 @@ mongoose.connect(
 app.use(express.json());
 
 // middleware
+const port = process.env.PORT || 3000
 app.use("/api/user", authRoute);
-app.listen(3000, () => console.log("Running at 3000"));
+app.listen(port, () => console.log("Running at ",port));
