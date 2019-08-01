@@ -8,7 +8,7 @@ const authRoute = require("../routes/auth");
 
 //connect
 mongoose.connect(
-  process.env.DB_CONNECT_OFFLINE,
+  process.env.DB_CONNECT_ONLINE,
   { useNewUrlParser: true, useCreateIndex: true },
   () => console.log("DB connected successfully")
 );
