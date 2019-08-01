@@ -20,7 +20,8 @@ routes.post("/register", async (req, res) => {
 
   const emailExists = await User.findOne({ email });
   const hashedPassword = await hashPassword(password);
-
+  console.log('HASHED!');
+  
   if (emailExists) {
     res
       .status(400)
@@ -34,11 +35,15 @@ routes.post("/register", async (req, res) => {
     const userJWT = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET, {
       expiresIn: "5h"
     });
+    console.log("JWT GENERATED");
+    
     user.tokens = user.tokens.concat({ token: userJWT });
     try {
       await user.save().then(user => {
         res.status(200).send({ savedUser: user });
       });
+      console.log("USER SAVED!");
+      
     } catch (error) {
       res.status(400).send({ error: error });
     }
