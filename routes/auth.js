@@ -36,7 +36,7 @@ routes.post("/register", async (req, res) => {
     });
     user.tokens = user.tokens.concat({ token: userJWT });
     try {
-      user.save().then(user => {
+      await user.save().then(user => {
         res.status(200).send({ savedUser: user });
       });
     } catch (error) {
