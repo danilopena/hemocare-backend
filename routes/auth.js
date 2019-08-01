@@ -9,6 +9,9 @@ const {
   registerValidation,
   loginValidation
 } = require("../validators/validation");
+routes.get('/', (req, res) => {
+  res.status(200).send({msg: "Bem vindo a API do App Hemocare"})
+})
 
 routes.post("/register", async (req, res) => {
   const { error } = registerValidation(req.body);
