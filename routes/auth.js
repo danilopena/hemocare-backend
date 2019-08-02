@@ -9,9 +9,9 @@ const {
   registerValidation,
   loginValidation
 } = require("../validators/validation");
-routes.get('/', (req, res) => {
-  res.status(200).send({msg: "Bem vindo a API do App Hemocare"})
-})
+routes.get("/", (req, res) => {
+  res.status(200).send({ msg: "Bem vindo a API do App Hemocare" });
+});
 
 routes.post("/register", async (req, res) => {
   const { error } = registerValidation(req.body);
@@ -20,11 +20,11 @@ routes.post("/register", async (req, res) => {
 
   const emailExists = await User.findOne({ email });
   const hashedPassword = await hashPassword(password);
-  
+
   if (emailExists) {
     res
       .status(400)
-      .send({ error: "Email já existe na base de dados. Tente fazer login." });
+      .send({ msg: "Email já existe na base de dados. Tente fazer login." });
   } else {
     const user = new User({
       name,
@@ -34,14 +34,14 @@ routes.post("/register", async (req, res) => {
     const userJWT = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET, {
       expiresIn: "5h"
     });
-    
+
     user.tokens = user.tokens.concat({ token: userJWT });
     try {
       await user.save().then(user => {
         res.status(200).send({ savedUser: user });
-      });      
+      });
     } catch (error) {
-      res.status(400).send({ error: error });
+      res.status(400).send({ msg: error });
     }
   }
 });
@@ -82,6 +82,7 @@ routes.post("/forgotPassword", async (req, res) => {
       res.status(200).send({ msg: "Email de recuperação enviado.", token });
     })
     .catch(error => {
+      res.status(400).send({ msg: "Erro na redefinicão " + error.toString() });
       console.log("Erro na redefinição" + error.toString());
     });
 });
@@ -122,7 +123,7 @@ routes.post("/logout", authMiddleware, async (req, res) => {
       return token.token !== req.token;
     });
     await req.user.save();
-    res.send();
+    res.status(200).send({ msg: "Usuario deslogado" });
   } catch (error) {
     res.send({ msg: error });
   }
@@ -131,7 +132,7 @@ routes.post("/logoutAll", authMiddleware, async (req, res) => {
   try {
     req.user.tokens = [];
     await req.user.save();
-    res.send();
+    res.status(200).send({ msg: "Usuario deslogado de todas as sessões" });
   } catch (error) {
     res.status(500).send();
   }
