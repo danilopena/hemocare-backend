@@ -114,7 +114,7 @@ routes.get("/list", authMiddleware, async (req, res) => {
     const users = await User.find({});
     res.status(200).send({ users });
   } catch (error) {
-    res.status(500).send({ msg: error });
+    res.status(401).send({ msg: error });
   }
 });
 routes.post("/logout", authMiddleware, async (req, res) => {
@@ -125,7 +125,7 @@ routes.post("/logout", authMiddleware, async (req, res) => {
     await req.user.save();
     res.status(200).send({ msg: "Usuario deslogado" });
   } catch (error) {
-    res.send({ msg: error });
+    res.status(401).send({ msg: error });
   }
 });
 routes.post("/logoutAll", authMiddleware, async (req, res) => {
@@ -134,7 +134,7 @@ routes.post("/logoutAll", authMiddleware, async (req, res) => {
     await req.user.save();
     res.status(200).send({ msg: "Usuario deslogado de todas as sessões" });
   } catch (error) {
-    res.status(500).send();
+    res.status(401).send({ msg: error.toString() });
   }
 });
 //utils
