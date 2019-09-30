@@ -6,6 +6,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const mailer = require("nodemailer");
+let myJwtToken = "";
 router.post("/register", async (req, res) => {
   const { error } = registerValidation(req.body);
   if (error) return res.status(400).send(error.details[0].message);
@@ -48,8 +49,14 @@ router.post("/login", async (req, res) => {
   if (!validPass) return res.status(400).send("Invalid Password");
 
   // create and assign token jwt
-  const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
-  res.header("auth-token", token).send(token);
+  myJwtToken = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET, {
+    expiresIn: 360000
+  });
+  user.authToken = myJwtToken;
+  user.save();
+  //console.log(myJwtToken);
+
+  res.header("auth-token", myJwtToken).send(myJwtToken);
 });
 
 // forgot-password
@@ -85,8 +92,6 @@ router.post("/resetPassword", async (req, res) => {
 
   try {
     const user = await User.findOne({ email });
-    console.log(user);
-
     if (!user) return res.status(400).send({ error: "User not found" });
     if (token !== user.resetPasswordToken) {
       // it do not records resetToke on mongo db atlas
@@ -110,6 +115,22 @@ router.post("/resetPassword", async (req, res) => {
     res.status(400).send("Not found");
   }
 });
+router.post("/logoff", async (req, res) => {
+  //res.status(200).send(myJwtToken);
+  const { email } = req.body;
+  console.log(email);
+
+  try {
+    await User.find({ email }).then(user => {
+      if (!user) return res.status(401).send({ error: "User not found" });
+      jwt.verify(user.authToken, process.env.TOKEN_SECRET);
+    });
+    res.status(200).send({ msg: "User logoff successful" });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 function sendMail(email, token, res) {
   const transporter = mailer.createTransport({
     host: process.env.EMAIL_HOST,
@@ -127,7 +148,7 @@ function sendMail(email, token, res) {
     text:
       "Vc esta recebendo este link porque voce ou outra pessoa requisitou que a senha do email seja resetada" +
       "Clique no link abaixo ou cole na barra de endereço do browser para completar o processo de redefinição " +
-      `http://localhost:3000/resetPassword/${token}` +
+      `https://hemocare-backend.herokuapp.com/api/user/resetPassword/${token}` +
       " Se você não solicitou essa redefinição, por gentileza ignorar. Sua senha continuará a mesma"
   };
   transporter.sendMail(mailOptions, function(err, response) {

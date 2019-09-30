@@ -8,8 +8,10 @@ const authRoute = require("../routes/auth");
 const postRoute = require("../routes/posts");
 
 //connect
-mongoose.connect(process.env.DB_CONNECT, { useNewUrlParser: true }, () =>
-  console.log("DB connection")
+mongoose.connect(
+  process.env.DB_CONNECT,
+  { useNewUrlParser: true, useCreateIndex: true },
+  () => console.log("DB connected successfully")
 );
 
 app.use(express.json());
