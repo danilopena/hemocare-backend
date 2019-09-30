@@ -141,7 +141,7 @@ function sendMail(email, token, res) {
     }
   });
   const mailOptions = {
-    from: "wsadevv@gmail.com",
+    from: `${process.env.EMAIL_USER}`,
     to: `${email}`,
     context: { token },
     subject: "Redefinição de senha",
