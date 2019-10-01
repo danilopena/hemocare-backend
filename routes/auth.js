@@ -145,14 +145,14 @@ function sendMail(email, token, res) {
     }
   });
   const mailOptions = {
-    from: `${process.env.EMAIL_USER}`,
+    from: "wsapcf@gmail.com",
     to: `${email}`,
     context: { token },
     subject: "Redefinição de senha",
     text:
       "Vc esta recebendo este link porque voce ou outra pessoa requisitou que a senha do email seja resetada" +
       "Clique no link abaixo ou cole na barra de endereço do browser para completar o processo de redefinição " +
-      `https://hemocare-backend.herokuapp.com/api/user/resetPassword/${token}` +
+      `https://hemocare-backend-new.herokuapp.com/api/user/resetPassword/${token}` +
       " Se você não solicitou essa redefinição, por gentileza ignorar. Sua senha continuará a mesma"
   };
   transporter.sendMail(mailOptions, function(err, response) {
