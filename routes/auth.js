@@ -145,7 +145,7 @@ function sendMail(email, token, res) {
     }
   });
   const mailOptions = {
-    from: "wsapcf@gmail.com",
+    from: "hemocareapp@gmail.com",
     to: `${email}`,
     context: { token },
     subject: "Redefinição de senha",
