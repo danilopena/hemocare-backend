@@ -19,5 +19,5 @@ app.use(express.json());
 // middleware
 app.use("/api/user", authRoute);
 app.use("/api/posts", postRoute);
-
-app.listen(3000, () => console.log("Running at 3000"));
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log(`Running at ${port}`));
