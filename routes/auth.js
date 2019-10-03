@@ -32,7 +32,7 @@ router.post("/register", async (req, res) => {
     res.send({ user: savedUser });
   } catch {
     console.log(err);
-    res.status(400).send(err);
+    res.status(400).json({msg:err});
   }
 });
 
