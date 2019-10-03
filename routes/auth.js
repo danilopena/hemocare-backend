@@ -129,7 +129,7 @@ router.post("/logoff", async (req, res) => {
       if (!user) return res.status(401).send({ error: "User not found" });
       jwt.verify(user.authToken, process.env.TOKEN_SECRET);
     });
-    res.status(200).send({ msg: "User logoff successful" });
+    res.status(200).send({ msg: "User logoff succeeded" });
   } catch (error) {
     console.log(error);
   }
