@@ -12,7 +12,7 @@ const registerValidation = data => {
     password: Joi.string()
       .min(6)
       .required(),
-    pathology: Joi.string("Pathology is always required").required()
+    pathology: Joi.string().required()
   };
   return Joi.validate(data, schema);
 };
