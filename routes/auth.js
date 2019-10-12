@@ -9,7 +9,7 @@ const mailer = require("nodemailer");
 let myJwtToken = "";
 router.post("/register", async (req, res) => {
   const { error } = registerValidation(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+  if (error) return res.status(400).json({ msg: error.details[0].message });
 
   //check dupliticy
   const emailExists = await User.findOne({ email: req.body.email });
