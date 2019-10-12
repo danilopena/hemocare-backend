@@ -41,12 +41,16 @@ router.post("/stock/add", async (req, res) => {
   const { userId } = req.query;
 
   const { quantity } = req.body;
-  const user = await User.findById(userId);
+  try {
+    const user = await User.findById(userId);
 
-  if (user) {
-    user.initialStock += quantity;
+    if (user) {
+      user.initialStock += quantity;
+    }
+    user.save();
+  } catch (error) {
+    return res.status(400).json({ msg: error });
   }
-  user.save();
   return res
     .status(200)
     .json({ msg: `Quantidade ${quantity} adicionada com sucesso` });
@@ -60,11 +64,15 @@ router.post("/stock/subtract", async (req, res) => {
       .json({ msg: validationResult.error.details[0].message });
   const { userId } = req.query;
   const { quantity } = req.body;
-  const user = await User.findById(userId);
-  if (user) {
-    user.initialStock -= quantity;
+  try {
+    const user = await User.findById(userId);
+    if (user) {
+      user.initialStock -= quantity;
+    }
+    user.save();
+  } catch (error) {
+    return res.status(400).json({ msg: error });
   }
-  user.save();
   return res
     .status(200)
     .json({ msg: `Quantidade ${quantity} removida com sucesso` });
