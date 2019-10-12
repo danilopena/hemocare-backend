@@ -12,7 +12,8 @@ const registerValidation = data => {
     password: Joi.string()
       .min(6)
       .required(),
-    pathology: Joi.string().required()
+    pathology: Joi.string().required(),
+    agreeToTerms: Joi.boolean().required()
   };
   return Joi.validate(data, schema);
 };

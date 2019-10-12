@@ -37,6 +37,10 @@ const userSchema = mongoose.Schema({
   pathology: {
     type: String,
     required: true
+  },
+  agreeToTerms: {
+    type: Boolean,
+    required: true
   }
 });
 

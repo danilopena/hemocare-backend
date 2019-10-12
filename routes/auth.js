@@ -20,7 +20,7 @@ router.post("/register", async (req, res) => {
 
   //const {name, email,password} = req.body,
 
-  const { name, email, pathology } = req.body;
+  const { name, email, pathology, agreeToTerms } = req.body;
   console.log(pathology);
 
   //new user
