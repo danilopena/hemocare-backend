@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const mailer = require("nodemailer");
 let myJwtToken = "";
+
 router.post("/register", async (req, res) => {
   const { error } = registerValidation(req.body);
   if (error) return res.status(400).json({ msg: error.details[0].message });

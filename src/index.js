@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 
 dotenv.config();
+const stockRoute = require("../routes/stock");
 const authRoute = require("../routes/auth");
 const postRoute = require("../routes/posts");
 
@@ -19,5 +20,6 @@ app.use(express.json());
 // middleware
 app.use("/api/user", authRoute);
 app.use("/api/posts", postRoute);
+app.use("/api", stockRoute);
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Running at ${port}`));

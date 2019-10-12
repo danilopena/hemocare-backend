@@ -41,6 +41,12 @@ const userSchema = mongoose.Schema({
   agreeToTerms: {
     type: Boolean,
     required: true
+  },
+  initialStock: {
+    type: Number
+  },
+  dosage: {
+    type: Number
   }
 });
 
