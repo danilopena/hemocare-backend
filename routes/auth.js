@@ -66,7 +66,7 @@ router.post("/login", async (req, res) => {
   user.save();
   //console.log(myJwtToken);
 
-  res.header("auth-token", myJwtToken).send(myJwtToken);
+  return res.header("auth-token", myJwtToken).json({ jwt_Token: myJwtToken, id: user.id });
 });
 
 // forgot-password
