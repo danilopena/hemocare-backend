@@ -33,6 +33,10 @@ const userSchema = mongoose.Schema({
   authToken: {
     type: String,
     select: false
+  },
+  pathology: {
+    type: String,
+    required: true
   }
 });
 

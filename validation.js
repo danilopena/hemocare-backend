@@ -11,7 +11,8 @@ const registerValidation = data => {
       .email(),
     password: Joi.string()
       .min(6)
-      .required()
+      .required(),
+    pathology: Joi.string().required()
   };
   return Joi.validate(data, schema);
 };

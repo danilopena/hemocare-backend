@@ -20,19 +20,23 @@ router.post("/register", async (req, res) => {
 
   //const {name, email,password} = req.body,
 
+  const { name, email, pathology } = req.body;
+  console.log(pathology);
+
   //new user
   const user = new User({
     // use destructuring
-    name: req.body.name,
-    email: req.body.email,
-    password: hashedPassword
+    name,
+    email,
+    password: hashedPassword,
+    pathology
   });
   try {
     const savedUser = await user.save();
     res.send({ user: savedUser });
   } catch {
     console.log(err);
-    res.status(400).json({msg:err});
+    res.status(400).json({ msg: err });
   }
 });
 
