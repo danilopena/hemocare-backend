@@ -27,7 +27,6 @@ router.post("/stock/create", async (req, res) => {
     return res.status(200).json({ msg: "Estoque criado com sucesso" });
   } catch (error) {
     console.log(error);
-
     return res.status(400).json({ msg: error });
   }
 });
@@ -55,6 +54,20 @@ router.post("/stock/add", async (req, res) => {
     .status(200)
     .json({ msg: `Quantidade ${quantity} adicionada com sucesso` });
 });
+router.get('/stock/getStock', (req, res) => {
+  const {userId} = req.query;
+  try{
+    const user = await User.findById(userId);
+    if(user){
+      res.status(200).json({stock: user.initialStock})
+    }else{
+      res.status(400).json({msg: 'Erro no retorno'})
+    }
+  }catch(error){
+    console.log(error);
+    
+  }
+})
 
 router.post("/stock/subtract", async (req, res) => {
   const validationResult = changeStockValidation(req.body);
