@@ -38,11 +38,9 @@ router.post("/stock/add", async (req, res) => {
       .status(400)
       .json({ msg: validationResult.error.details[0].message });
   const { userId } = req.query;
-
   const { quantity } = req.body;
   try {
     const user = await User.findById(userId);
-
     if (user) {
       user.initialStock += quantity;
     }
@@ -61,7 +59,7 @@ router.get("/stock/getStock", async (req, res) => {
 
   try {
     if (user) {
-      res.status(200).json({ stock: user.initialStock });
+      res.status(200).json(user.initialStock);
     } else {
       res.status(400).json({ msg: "Erro no retorno" });
     }
