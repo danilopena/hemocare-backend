@@ -56,13 +56,13 @@ router.post("/stock/add", async (req, res) => {
 });
 router.get("/stock/getStock", async (req, res) => {
   const { userId } = req.query;
+  console.log(userId);
+
   try {
     const user = await User.findById(userId);
     if (user) {
-      console.log(user);
       res.status(200).json({ stock: user.initialStock });
     } else {
-      console.warn(user);
       res.status(400).json({ msg: "Erro no retorno" });
     }
   } catch (error) {
