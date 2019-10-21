@@ -57,9 +57,9 @@ router.post("/stock/add", async (req, res) => {
 router.get("/stock/getStock", async (req, res) => {
   const { userId } = req.query;
   console.log(userId);
+  const user = await User.findById(userId);
 
   try {
-    const user = await User.findById(userId);
     if (user) {
       res.status(200).json({ stock: user.initialStock });
     } else {
