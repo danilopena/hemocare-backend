@@ -64,7 +64,7 @@ router.get("/stock/getStock", async (req, res) => {
       res.status(400).json({ msg: "Erro no retorno" });
     }
   } catch (error) {
-    console.warn(error);
+    return res.status(400).json({ msg: error });
   }
 });
 
