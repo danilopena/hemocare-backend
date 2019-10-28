@@ -50,7 +50,14 @@ const userSchema = mongoose.Schema({
   },
   infusions: {
     type: Number
+  },
+  percentageUsed: {
+    type: Number
   }
 });
-
+userSchema.pre("save", function(next) {
+  this.percentageUsed =
+    (this.infusions * 100) / (this.initialStock + this.infusions);
+  next();
+});
 module.exports = mongoose.model("User", userSchema);
