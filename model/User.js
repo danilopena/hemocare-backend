@@ -47,6 +47,9 @@ const userSchema = mongoose.Schema({
   },
   dosage: {
     type: Number
+  },
+  infusions: {
+    type: Number
   }
 });
 

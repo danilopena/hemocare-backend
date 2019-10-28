@@ -80,6 +80,7 @@ router.post("/stock/subtract", async (req, res) => {
   try {
     const user = await User.findById(userId);
     if (user) {
+      user.infusions += quantity;
       user.initialStock -= quantity;
     }
     user.save();
