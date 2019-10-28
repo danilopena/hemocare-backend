@@ -60,7 +60,7 @@ router.get("/stock/getStock", async (req, res) => {
   try {
     if (user) {
       const quantity = user.initialStock;
-      res.status(200).json({ quantity: quantity });
+      res.status(200).json({ quantity: quantity, infusions: user.infusions });
     } else {
       res.status(400).json({ msg: "Erro no retorno" });
     }
