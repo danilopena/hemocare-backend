@@ -43,6 +43,8 @@ router.post("/stock/add", async (req, res) => {
     const user = await User.findById(userId);
     if (user) {
       user.initialStock += quantity;
+      user.infusions = 0;
+      user.percentageUsed = 0;
     }
     user.save();
   } catch (error) {
