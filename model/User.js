@@ -43,16 +43,20 @@ const userSchema = mongoose.Schema({
     required: true
   },
   initialStock: {
-    type: Number
+    type: Number,
+    default: 0
   },
   dosage: {
-    type: Number
+    type: Number,
+    default: 0
   },
   infusions: {
-    type: Number
+    type: Number,
+    default: 0
   },
   percentageUsed: {
-    type: Number
+    type: Number,
+    default: 0
   }
 });
 userSchema.pre("save", function(next) {
