@@ -14,17 +14,27 @@ router.post("/create", async (req, res) => {
         return res.status(200).json({ msg: "Historico criado " });
       })
       .catch(error => {
-        console.log(error);
+        return res
+          .status(400)
+          .json({ msg: `Erro ao adicionar infusão no histórico>> ${error}` });
       });
-  } catch (error) {}
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ msg: `Erro ao salvar infusão no histórico>> ${error}` });
+  }
 });
 
 router.get("/getHistory", async (req, res) => {
   const { userId } = req.query;
-  const historyFromUser = await History.find()
-    .where({ user: userId })
-    .populate("user");
-  console.log(historyFromUser);
-  return res.status(200).json({ msg: "SUCCESS@" });
+  let historyFromUser;
+  try {
+    historyFromUser = await History.find()
+      .where({ user: userId })
+      .populate("user");
+  } catch (error) {
+    return res.status(400).json({ msg: `Erro ao buscar histórico ${error}` });
+  }
+  return res.status(200).json({ historyFromUser });
 });
 module.exports = router;
