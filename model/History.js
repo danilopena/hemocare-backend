@@ -18,7 +18,7 @@ const historySchema = mongoose.Schema({
   },
   infusionDate: {
     type: Date,
-    required: true,
+    required: true
   },
   infusionTime: {
     type: Date,
