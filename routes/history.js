@@ -18,7 +18,7 @@ router.post("/create", async (req, res) => {
   console.log(infusionDateRaw);
   console.log(infusionTimeRaw);
   const infusionDate = format(parseISO(infusionDateRaw), "dd/MM/yyyy");
-  const infusionTime = format(parseISO(infusionTimeRaw), "HH:mm");
+  const infusionTime = format(parseISO(infusionTimeRaw), "dd/MM/yyyy HH:mm");
 
   const createdHistory = new History({
     typeInfusion,
@@ -32,8 +32,6 @@ router.post("/create", async (req, res) => {
     await createdHistory
       .save()
       .then(history => {
-        console.log(history);
-        console.log(createdHistory);
         return res.status(200).json({ msg: "Historico criado " });
       })
       .catch(error => {
