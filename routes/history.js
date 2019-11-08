@@ -8,10 +8,11 @@ const router = express.Router();
 
 router.post("/create", async (req, res) => {
   const { typeInfusion, dosage, recurring, user, date, hour } = req.body;
+  console.log(date);
+  console.log(hour);
   const infusionDate = format(parseISO(date), "dd/MM/yyyy");
   const infusionTime = format(parseISO(hour), "HH:mm");
-  console.log(infusionDate);
-  console.log(infusionTime);
+
   const createdHistory = new History({
     typeInfusion,
     dosage,
@@ -29,12 +30,10 @@ router.post("/create", async (req, res) => {
         return res.status(200).json({ msg: "Historico criado " });
       })
       .catch(error => {
-        return res
-          .status(400)
-          .json({
-            msg: `Erro ao adicionar infusão no histórico>> ${error}`,
-            payload: { infusionDate, infusionTime }
-          });
+        return res.status(400).json({
+          msg: `Erro ao adicionar infusão no histórico>> ${error}`,
+          payload: { infusionDate, infusionTime }
+        });
       });
   } catch (error) {
     return res
