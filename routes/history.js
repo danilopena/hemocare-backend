@@ -7,11 +7,18 @@ const format = require("date-fns/format");
 const router = express.Router();
 
 router.post("/create", async (req, res) => {
-  const { typeInfusion, dosage, recurring, user, date, hour } = req.body;
-  console.log(date);
-  console.log(hour);
-  const infusionDate = format(parseISO(date), "dd/MM/yyyy");
-  const infusionTime = format(parseISO(hour), "HH:mm");
+  const {
+    typeInfusion,
+    dosage,
+    recurring,
+    user,
+    infusionDateRaw,
+    infusionTimeRaw
+  } = req.body;
+  console.log(infusionDateRaw);
+  console.log(infusionTimeRaw);
+  const infusionDate = format(parseISO(infusionDateRaw), "dd/MM/yyyy");
+  const infusionTime = format(parseISO(infusionTimeRaw), "HH:mm");
 
   const createdHistory = new History({
     typeInfusion,
