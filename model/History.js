@@ -15,6 +15,14 @@ const historySchema = mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User"
+  },
+  infusionDate: {
+    type: Date,
+    required: true,
+  },
+  infusionTime: {
+    type: Date,
+    required: true
   }
 });
 module.exports = mongoose.model("History", historySchema);

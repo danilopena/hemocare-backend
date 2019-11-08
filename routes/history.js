@@ -1,10 +1,18 @@
 const express = require("express");
 const History = require("../model/History");
+const getHours = require('date-fns/getHours')
+const getMinutes = require('date-fns/getMinutes')
+const parseISO = require('date-fns/parseISO')
+const format = require('date-fns/format')
 const router = express.Router();
 
 router.post("/create", async (req, res) => {
-  const { typeInfusion, dosage, recurring, user } = req.body;
-  const createdHistory = new History({ typeInfusion, dosage, recurring, user });
+  const { typeInfusion, dosage, recurring, user, date, hour } = req.body;
+  const infusionDate = format(parseISO(date), 'dd/MM/yyyy')
+  const infusionTime = format(parseISO(hour), 'HH:mm')
+  console.log(infusionDate)
+  console.log(infusionTime)
+  const createdHistory = new History({ typeInfusion, dosage, recurring, user, infusionDate, infusionTime });
   try {
     await createdHistory
       .save()
