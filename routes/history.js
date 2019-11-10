@@ -15,10 +15,10 @@ router.post("/create", async (req, res) => {
     infusionDateRaw,
     infusionTimeRaw
   } = req.body;
-  console.log(infusionDateRaw);
-  console.log(infusionTimeRaw);
+
   const infusionDate = format(parseISO(infusionDateRaw), "dd/MM/yyyy");
   const infusionTime = format(parseISO(infusionTimeRaw), "dd/MM/yyyy HH:mm");
+  fs.write('asfdadas')
 
   const createdHistory = new History({
     typeInfusion,
