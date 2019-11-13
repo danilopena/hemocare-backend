@@ -62,15 +62,13 @@ router.get("/stock/getStock", async (req, res) => {
   try {
     if (user) {
       const quantity = user.initialStock;
-      res
-        .status(200)
-        .json({
-          quantity: quantity,
-          infusions: user.infusions,
-          percentageUsed: user.percentageUsed
-        });
+      res.status(200).json({
+        quantity: quantity,
+        infusions: user.infusions,
+        percentageUsed: user.percentageUsed
+      });
     } else {
-      res.status(400).json({ msg: "Erro no retorno" });
+      res.status(400).json({ msg: "Erro ao consultar estoque" });
     }
   } catch (error) {
     return res.status(400).json({ msg: error });
@@ -88,6 +86,11 @@ router.post("/stock/subtract", async (req, res) => {
   try {
     const user = await User.findById(userId);
     if (user) {
+      if (user.initialStock < quantity) {
+        return res
+          .status(403)
+          .json({ msg: "Quantidade a ser removida é maior que o estoque. Reveja os dados" });
+      }
       user.infusions += quantity;
       user.initialStock -= quantity;
     }
