@@ -1,13 +1,9 @@
 const express = require("express");
 const History = require("../model/History");
-const getHours = require("date-fns/getHours");
-const getMinutes = require("date-fns/getMinutes");
 const parseISO = require("date-fns/parseISO");
 const format = require("date-fns/format");
 const router = express.Router();
-const startOfMonth = require("date-fns/startOfMonth");
 const endOfMonth = require("date-fns/endOfMonth");
-const Op = require("mongoose");
 router.post("/create", async (req, res) => {
   const {
     typeInfusion,
@@ -62,6 +58,7 @@ router.get("/getHistory", async (req, res) => {
 });
 
 router.get("/historyFromMonth", async (req, res) => {
+  console.log(req.body);
   const { date } = req.body;
   const [mes, ano] = date.split("/");
 
