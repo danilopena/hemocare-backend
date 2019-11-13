@@ -5,9 +5,9 @@ const getMinutes = require("date-fns/getMinutes");
 const parseISO = require("date-fns/parseISO");
 const format = require("date-fns/format");
 const router = express.Router();
-const startOfMonth = require('date-fns/startOfMonth')
-const endOfMonth = require('date-fns/endOfMonth')
-const Op = require('mongoose')
+const startOfMonth = require("date-fns/startOfMonth");
+const endOfMonth = require("date-fns/endOfMonth");
+const Op = require("mongoose");
 router.post("/create", async (req, res) => {
   const {
     typeInfusion,
@@ -61,25 +61,24 @@ router.get("/getHistory", async (req, res) => {
   return res.status(200).json({ historyFromUser });
 });
 
-router.get('/historyFromMonth',async (req, res)=>{
-    const {date} = req.headers;
-    const [mes, ano] = date.split('/')
-    
-    //meses: janeiro = 0 dezembro = 11
-    const startDate = new Date(parseInt(ano), ((parseInt(mes))-1), 1)
-    //end dateS
-    const endDate = endOfMonth(startDate)        
-    console.log(startDate);
-    console.log(endDate);
-    const infusionsInRange = await History.find({ infusionDate: { $gte: startDate, $lte: endDate } })
-    console.log(infusionsInRange);
-    
-    if(infusionsInRange.length === 0){
-        return res.status(400).json({msg: 'Não existem infusões registradas para o período consultado.'})
-    }
-  
-    return res.status(200).json({msg: 'Sucesso!', payload: infusionsInRange})
+router.get("/historyFromMonth", async (req, res) => {
+  const { date } = req.body;
+  const [mes, ano] = date.split("/");
 
+  //meses: janeiro = 0 dezembro = 11
+  const startDate = new Date(parseInt(ano), parseInt(mes) - 1, 1);
+  //end dateS
+  const endDate = endOfMonth(startDate);
 
-})
+  const infusionsInRange = await History.find({
+    infusionDate: { $gte: startDate, $lte: endDate }
+  });
+  if (infusionsInRange.length === 0) {
+    return res.status(400).json({
+      msg: "Não existem infusões registradas para o período consultado."
+    });
+  }
+
+  return res.status(200).json({ msg: "Sucesso!", payload: infusionsInRange });
+});
 module.exports = router;
