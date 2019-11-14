@@ -16,11 +16,7 @@ const historySchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User"
   },
-  infusionDate: {
-    type: Date,
-    required: true
-  },
-  infusionTime: {
+  date: {
     type: Date,
     required: true
   }

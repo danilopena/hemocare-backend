@@ -1,30 +1,40 @@
 const express = require("express");
 const History = require("../model/History");
-const parseISO = require("date-fns/parseISO");
-const format = require("date-fns/format");
+
+const format = require('date-fns/format')
+const parse = require('date-fns/parse')
 const router = express.Router();
 const endOfMonth = require("date-fns/endOfMonth");
 router.post("/create", async (req, res) => {
-  const {
+  let {
     typeInfusion,
     dosage,
     recurring,
     user,
-    infusionDateRaw,
-    infusionTimeRaw
+    date
   } = req.body;
-
-  const infusionDate = format(parseISO(infusionDateRaw), "dd/MM/yyyy");
-  const infusionTime = format(parseISO(infusionTimeRaw), "dd/MM/yyyy HH:mm");
+  const [data, hora] = date.split(' ')
+  const [dia, mes, ano] = data.split('/')
+  const [horas, minuto, segundo] = hora.split(':')
+  console.log(`
+    ${dia}
+    ${mes}
+    ${ano}
+    ${horas}
+    ${minuto}
+    ${segundo}
+  `)
+  const finalFuckingDate = new Date(ano,mes-1,dia,horas, minuto,segundo)
+  console.log(format(finalFuckingDate, 'dd/MM/yyyy HH:mm:ss'))
 
   const createdHistory = new History({
     typeInfusion,
     dosage,
     recurring,
     user,
-    infusionDate,
-    infusionTime
+    date: finalFuckingDate
   });
+
   try {
     await createdHistory
       .save()
@@ -33,8 +43,7 @@ router.post("/create", async (req, res) => {
       })
       .catch(error => {
         return res.status(400).json({
-          msg: `Erro ao adicionar infusão no histórico>> ${error}`,
-          payload: { infusionDate, infusionTime }
+          msg: `Erro ao adicionar infusão no histórico>> ${error}`
         });
       });
   } catch (error) {
