@@ -8,7 +8,7 @@ const router = express.Router();
 const endOfMonth = require("date-fns/endOfMonth");
 router.post("/create", async (req, res) => {
 
-  let {
+  const {
     typeInfusion,
     dosage,
     recurring,
