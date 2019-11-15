@@ -3,6 +3,7 @@ const History = require("../model/History");
 
 const format = require('date-fns/format')
 const parse = require('date-fns/parse')
+const parseISO = require('date-fns/parseISO')
 const router = express.Router();
 const endOfMonth = require("date-fns/endOfMonth");
 router.post("/create", async (req, res) => {
@@ -15,20 +16,22 @@ router.post("/create", async (req, res) => {
     date
   } = req.body;
   console.log(`this is date: ${date}`)
-  const [data, hora] = date.split(' ')
-  const [dia, mes, ano] = data.split('/')
-  const [horas, minuto, segundo] = hora.split(':')
-  console.log(`
-    ${dia}
-    ${mes}
-    ${ano}
-    ${horas}
-    ${minuto}
-    ${segundo}
-  `)
-  const finalFuckingDate = new Date(ano,mes-1,dia,horas, minuto,segundo)
-  console.log(format(finalFuckingDate, 'dd/MM/yyyy HH:mm:ss'))
+  console.log(comment)
 
+  // const [data, hora] = cuntAssDate.split(' ')
+  // const [dia, mes, ano] = data.split('/')
+  // const [horas, minuto, segundo] = hora.split(':')
+  // console.log(`
+  //   ${dia}
+  //   ${mes}
+  //   ${ano}
+  //   ${horas}
+  //   ${minuto}
+  //   ${segundo}
+  // `)
+  // const finalFuckingDate = new Date(ano,mes-1,dia,horas, minuto,segundo)
+  // console.log(format(finalFuckingDate, 'dd/MM/yyyy HH:mm:ss'))
+return;
   const createdHistory = new History({
     typeInfusion,
     dosage,
