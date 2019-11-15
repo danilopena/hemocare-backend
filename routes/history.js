@@ -1,62 +1,37 @@
 const express = require("express");
+const router = express.Router();
+
 const History = require("../model/History");
 
-const format = require('date-fns/format')
-const parse = require('date-fns/parse')
-const parseISO = require('date-fns/parseISO')
-const router = express.Router();
+const format = require("date-fns/format");
+const parse = require("date-fns/parse");
+const parseISO = require("date-fns/parseISO");
 const endOfMonth = require("date-fns/endOfMonth");
+
 router.post("/create", async (req, res) => {
+  const { typeInfusion, dosage, recurring, user, comment, date } = req.body;
 
-  const {
-    typeInfusion,
-    dosage,
-    recurring,
-    user,
-      comment,
-    date
-  } = req.body;
-  console.log(`
-     ${typeInfusion}
-     ${dosage}
-     ${recurring}
-     ${user}
-     ${comment}
-     ${date}
-   `)
+  //format
+  //2019-11-14T15:12:00.000Z
+  const fullDate = new Date(date, "dd/MM/yyyy HH:mm:ss");
+  console.log(fullDate);
 
-
-  console.log(`this is date: ${date}`)
-  console.log(comment)
-  return res.status(200).json({date});
-  // const [data, hora] = cuntAssDate.split(' ')
-  // const [dia, mes, ano] = data.split('/')
-  // const [horas, minuto, segundo] = hora.split(':')
-  // console.log(`
-  //   ${dia}
-  //   ${mes}
-  //   ${ano}
-  //   ${horas}
-  //   ${minuto}
-  //   ${segundo}
-  // `)
-  // const finalFuckingDate = new Date(ano,mes-1,dia,horas, minuto,segundo)
-  // console.log(format(finalFuckingDate, 'dd/MM/yyyy HH:mm:ss'))
-return;
   const createdHistory = new History({
     typeInfusion,
     dosage,
     recurring,
     user,
     comment,
-    date,
+    date
   });
 
   try {
     await createdHistory
       .save()
       .then(history => {
-        return res.status(200).json({ msg: "Histórico criado " });
+        return res.status(200).json({
+          msg: "Histórico criado "
+        });
       })
       .catch(error => {
         return res.status(400).json({
@@ -64,9 +39,9 @@ return;
         });
       });
   } catch (error) {
-    return res
-      .status(400)
-      .json({ msg: `Erro ao salvar infusão no histórico>> ${error}` });
+    return res.status(400).json({
+      msg: `Erro ao salvar infusão no histórico>> ${error}`
+    });
   }
 });
 
