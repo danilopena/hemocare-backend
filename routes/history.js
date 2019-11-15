@@ -14,7 +14,7 @@ router.post("/create", async (req, res) => {
   const [dia, mes, ano] = data.split('/')
   const [horas, minutos, segundos] = hora.split(':')
 
-  const finalDate = new Date(ano, mes-1, dia, horas-2 ,minutos, segundos);
+  const finalDate = new Date(ano, mes-1, dia, horas ,minutos, segundos);
   console.log(finalDate)
 
 
