@@ -17,7 +17,6 @@ router.post("/create", async (req, res) => {
   const finalDate = new Date(ano, mes-1, dia, horas-2 ,minutos, segundos);
   console.log(finalDate)
 
-  return;
 
   const createdHistory = new History({
     typeInfusion,
