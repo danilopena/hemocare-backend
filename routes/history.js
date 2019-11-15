@@ -64,6 +64,9 @@ router.get("/historyFromMonth", async (req, res) => {
   //end dateS
   const endDate = endOfMonth(startDate);
 
+  console.log(startDate)
+  console.log(endDate)
+
   const infusionsInRange = await History.find({
     infusionDate: { $gte: startDate, $lte: endDate }
   });
