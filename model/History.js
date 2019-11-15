@@ -16,6 +16,10 @@ const historySchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User"
   },
+  comment: {
+    type: String,
+    required: true
+  },
   date: {
     type: Date,
     required: true

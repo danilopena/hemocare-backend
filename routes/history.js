@@ -11,8 +11,10 @@ router.post("/create", async (req, res) => {
     dosage,
     recurring,
     user,
+      comment,
     date
   } = req.body;
+  console.log(`this is date: ${date}`)
   const [data, hora] = date.split(' ')
   const [dia, mes, ano] = data.split('/')
   const [horas, minuto, segundo] = hora.split(':')
@@ -32,6 +34,7 @@ router.post("/create", async (req, res) => {
     dosage,
     recurring,
     user,
+    comment,
     date: finalFuckingDate
   });
 
