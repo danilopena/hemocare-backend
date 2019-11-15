@@ -10,14 +10,22 @@ const endOfMonth = require("date-fns/endOfMonth");
 
 router.post("/create", async (req, res) => {
   const { typeInfusion, dosage, recurring, user, comment, date } = req.body;
-  console.log(date)
+  const [data, hora] = date.split(' ')
+  const [dia, mes, ano] = data.split('/')
+  const [horas, minutos, segundos] = hora.split(':')
+
+  const finalDate = new Date(ano, mes-1, dia, horas-2 ,minutos, segundos);
+  console.log(finalDate)
+
+  return;
+
   const createdHistory = new History({
     typeInfusion,
     dosage,
     recurring,
     user,
     comment,
-    date
+    date: finalDate
   });
 
   try {
@@ -60,7 +68,7 @@ router.get("/historyFromMonth", async (req, res) => {
   const [mes, ano] = date.split("/");
 
   //meses: janeiro = 0 dezembro = 11
-  const startDate = new Date(parseInt(ano), parseInt(mes) - 1, 1);
+  const startDate = new Date(parseInt(ano), parseInt(mes)-1, 1);
   //end dateS
   const endDate = endOfMonth(startDate);
 
