@@ -7,6 +7,7 @@ const parseISO = require('date-fns/parseISO')
 const router = express.Router();
 const endOfMonth = require("date-fns/endOfMonth");
 router.post("/create", async (req, res) => {
+
   let {
     typeInfusion,
     dosage,
@@ -17,7 +18,7 @@ router.post("/create", async (req, res) => {
   } = req.body;
   console.log(`this is date: ${date}`)
   console.log(comment)
-
+  return res.status(200).json({date});
   // const [data, hora] = cuntAssDate.split(' ')
   // const [dia, mes, ano] = data.split('/')
   // const [horas, minuto, segundo] = hora.split(':')
