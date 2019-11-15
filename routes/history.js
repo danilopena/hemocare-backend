@@ -10,12 +10,7 @@ const endOfMonth = require("date-fns/endOfMonth");
 
 router.post("/create", async (req, res) => {
   const { typeInfusion, dosage, recurring, user, comment, date } = req.body;
-
-  //format
-  //2019-11-14T15:12:00.000Z
-  const fullDate = format(date, "dd/MM/yyyy HH:mm:ss");
-  console.log(fullDate);
-
+  console.log(date)
   const createdHistory = new History({
     typeInfusion,
     dosage,
@@ -30,7 +25,8 @@ router.post("/create", async (req, res) => {
       .save()
       .then(history => {
         return res.status(200).json({
-          msg: "Histórico criado "
+          msg: "Histórico criado ",
+          history
         });
       })
       .catch(error => {
@@ -71,6 +67,7 @@ router.get("/historyFromMonth", async (req, res) => {
   const infusionsInRange = await History.find({
     infusionDate: { $gte: startDate, $lte: endDate }
   });
+
   if (infusionsInRange.length === 0) {
     return res.status(400).json({
       msg: "Não existem infusões registradas para o período consultado."
