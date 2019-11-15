@@ -16,6 +16,16 @@ router.post("/create", async (req, res) => {
       comment,
     date
   } = req.body;
+  console.log(`
+     ${typeInfusion}
+     ${dosage}
+     ${recurring}
+     ${user}
+     ${comment}
+     ${date}
+   `)
+
+
   console.log(`this is date: ${date}`)
   console.log(comment)
   return res.status(200).json({date});
@@ -39,7 +49,7 @@ return;
     recurring,
     user,
     comment,
-    date: finalFuckingDate
+    date,
   });
 
   try {
