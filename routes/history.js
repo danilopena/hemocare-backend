@@ -14,7 +14,7 @@ router.post("/create", async (req, res) => {
   //format
   //2019-11-14T15:12:00.000Z
   const fullDate = new Date(date, "dd/MM/yyyy HH:mm:ss");
-  console.log(fullDate);
+  console.log(date);
 
   const createdHistory = new History({
     typeInfusion,
