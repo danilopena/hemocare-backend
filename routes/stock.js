@@ -76,6 +76,7 @@ router.get("/stock/getStock", async (req, res) => {
 });
 
 router.post("/stock/subtract", async (req, res) => {
+  let percentageUsed;
   const validationResult = changeStockValidation(req.body);
   if (validationResult.error !== null)
     return res
@@ -95,12 +96,14 @@ router.post("/stock/subtract", async (req, res) => {
       user.initialStock -= quantity;
     }
     user.save();
+    percentageUsed = user.percentageUsed;
+
   } catch (error) {
     return res.status(400).json({ msg: error });
   }
   return res
     .status(200)
-    .json({ msg: `Quantidade ${quantity} removida com sucesso` });
+    .json({ msg: `Quantidade ${quantity} removida com sucesso`, percentageUser: percentageUsed });
 });
 
 module.exports = router;
