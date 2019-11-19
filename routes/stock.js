@@ -32,6 +32,7 @@ router.post("/stock/create", async (req, res) => {
 });
 
 router.post("/stock/add", async (req, res) => {
+  let percentageUsed
   const validationResult = changeStockValidation(req.body);
   if (validationResult.error !== null)
     return res
@@ -46,13 +47,14 @@ router.post("/stock/add", async (req, res) => {
       user.infusions = 0;
       user.percentageUsed = 0;
     }
-    user.save();
+    await user.save();
+    percentageUsed = user.percentageUsed;
   } catch (error) {
     return res.status(400).json({ msg: error });
   }
   return res
     .status(200)
-    .json({ msg: `Quantidade ${quantity} adicionada com sucesso` });
+    .json({ msg: `Quantidade ${quantity} adicionada com sucesso`, percentageUsed: percentageUsed });
 });
 router.get("/stock/getStock", async (req, res) => {
   const { userId } = req.query;
