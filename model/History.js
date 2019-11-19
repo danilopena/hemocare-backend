@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const format = require('date-fns/format')
 const historySchema = mongoose.Schema({
   typeInfusion: {
     type: String,
@@ -23,6 +23,15 @@ const historySchema = mongoose.Schema({
   date: {
     type: Date,
     required: true
+  },
+  formattedDate:{
+    type: Date,
+    default: ''
+
   }
+});
+historySchema.pre("save", function(next) {
+  this.formattedDate = format(this.date, 'dd/MM/yyyy HH:mm:ss')
+  next();
 });
 module.exports = mongoose.model("History", historySchema);
