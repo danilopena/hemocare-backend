@@ -34,8 +34,8 @@ router.post("/create", async (req, res) => {
     if(userData.initialStock < dosage ){
       return res.status(400).json({msg: 'Seu estoque não permite essa infusão'})
     }
-    userData.initialStock -= dosage;
-    userData.infusions += dosage;
+    userData.initialStock -= parseInt(dosage);
+    userData.infusions += parseInt(dosage);
     await userData.save();
     console.log(userData.percentageUsed)
 
