@@ -103,7 +103,7 @@ router.post("/stock/subtract", async (req, res) => {
   }
   return res
     .status(200)
-    .json({ msg: `Quantidade ${quantity} removida com sucesso`, percentageUser: percentageUsed });
+    .json({ msg: `Quantidade ${quantity} removida com sucesso`, percentageUsed: percentageUsed });
 });
 
 module.exports = router;
