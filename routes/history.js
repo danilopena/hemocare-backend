@@ -3,7 +3,7 @@ const router = express.Router();
 
 const History = require("../model/History");
 const User = require("../model/User");
-
+import { zonedTimeToUtc } from 'date-fns-tz';
 const format = require("date-fns/format");
 const parse = require("date-fns/parse");
 const parseISO = require("date-fns/parseISO");
@@ -33,7 +33,7 @@ router.post("/create", async (req, res) => {
 
     const userData = await User.findById(user);
     console.log(userData)
-    if(userData.initialStock <= dosage ){
+    if(userData.initialStock < dosage ){
       return res.status(400).json({msg: 'Seu estoque não permite essa infusão'})
     }
     userData.initialStock -= dosage;
@@ -80,10 +80,18 @@ router.get("/historyFromMonth", async (req, res) => {
   const startDate = new Date(parseInt(ano), parseInt(mes)-1, 1);
   //end dateS
   const endDate = endOfMonth(startDate);
+  // before
+  /*
+    { date: '11/2019' }
+2019-11-01T03:00:00.000Z
+2019-12-01T01:59:59.999Z
 
-  console.log(startDate)
+
+   */
+  console.log(zonedTimeToUtc(startDate, 'America/Sao_Paulo'))
   console.log(endDate)
   //timezone treating: const znDate = zonedTimeToUtc(parsedDate, 'America/Sao_Paulo');
+
 
   const infusionsInRange = await History.find({
     infusionDate: { $gte: startDate, $lte: endDate }
