@@ -11,7 +11,7 @@ const termsRoute = require('../routes/terms')
 //connect
 mongoose.connect(
   process.env.DB_CONNECT,
-  { useNewUrlParser: true, useCreateIndex: true },
+  { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true },
   () => console.log("DB connected successfully")
 );
 

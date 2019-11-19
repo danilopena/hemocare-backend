@@ -3,12 +3,11 @@ const router = express.Router();
 
 const History = require("../model/History");
 const User = require("../model/User");
-import { zonedTimeToUtc } from 'date-fns-tz';
+const {zonedTimeToUtc} =  require('date-fns-tz');
 const format = require("date-fns/format");
-const parse = require("date-fns/parse");
+const subHours = require("date-fns/subHours");
 const parseISO = require("date-fns/parseISO");
-const endOfMonth = require("date-fns/endOfMonth");
-
+const addHours = require('date-fns/addHours')
 router.post("/create", async (req, res) => {
   const { typeInfusion, dosage, recurring, user, comment, date } = req.body;
   const [data, hora] = date.split(' ')
@@ -22,9 +21,9 @@ router.post("/create", async (req, res) => {
   const createdHistory = new History({
     typeInfusion,
     dosage,
-    recurring,
+    recurring: recurring ? recurring : false,
     user,
-    comment,
+    comment: comment ? comment : '',
     date: finalDate
   });
 
@@ -32,7 +31,6 @@ router.post("/create", async (req, res) => {
     // verificando se o user tem estoque deduzivel
 
     const userData = await User.findById(user);
-    console.log(userData)
     if(userData.initialStock < dosage ){
       return res.status(400).json({msg: 'Seu estoque não permite essa infusão'})
     }
@@ -73,30 +71,38 @@ router.get("/getHistory", async (req, res) => {
 
 router.get("/historyFromMonth", async (req, res) => {
   console.log(req.body);
-  const { date } = req.body;
-  const [mes, ano] = date.split("/");
+  const { startDate, endDate } = req.body;
+  // const [mes, ano] = date.split("/");
 
-  //meses: janeiro = 0 dezembro = 11
-  const startDate = new Date(parseInt(ano), parseInt(mes)-1, 1);
-  //end dateS
-  const endDate = endOfMonth(startDate);
-  // before
-  /*
-    { date: '11/2019' }
-2019-11-01T03:00:00.000Z
-2019-12-01T01:59:59.999Z
+  //dd/MM/yyyy
+  console.log(
+
+      `
+      ${startDate}
+      ${endDate}
+      
+      `
+  )
+  const[startDia, startMes, startAno] = startDate.split('/')
+  const finalStartDate = new Date(startAno, startMes-1, startDia, 0, 0, 0)
+
+  const [endDia, endMes, endAno] = endDate.split('/')
+  const finalEndDate = new Date(endAno, endMes-1, endDia, 23, 59,59)
+
+  const utcStart = subHours(zonedTimeToUtc(finalStartDate, 'America/Sao_Paulo'), 3);
+  const utcEnd = subHours(zonedTimeToUtc(finalEndDate, 'America/Sao_Paulo'), 3);
 
 
-   */
-  console.log(zonedTimeToUtc(startDate, 'America/Sao_Paulo'))
-  console.log(endDate)
-  //timezone treating: const znDate = zonedTimeToUtc(parsedDate, 'America/Sao_Paulo');
-
-
+  console.log(utcStart)
+  console.log(addHours(utcEnd, 1));
+  // //meses: janeiro = 0 dezembro = 11
+  // const startDate = new Date(parseInt(ano), parseInt(mes)-1, 1);
+  // //end dateS
+  // const endDate = endOfMonth(startDate);
   const infusionsInRange = await History.find({
-    infusionDate: { $gte: startDate, $lte: endDate }
-  });
-
+    date: { $gte: utcStart, $lte: addHours(utcEnd, 1) }
+  })
+  console.log(infusionsInRange)
   if (infusionsInRange.length === 0) {
     return res.status(400).json({
       msg: "Não existem infusões registradas para o período consultado."
