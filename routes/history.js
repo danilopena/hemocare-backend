@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const History = require("../model/History");
+const User = require("../model/User");
 
 const format = require("date-fns/format");
 const parse = require("date-fns/parse");
@@ -28,6 +29,15 @@ router.post("/create", async (req, res) => {
   });
 
   try {
+    // verificando se o user tem estoque deduzivel
+
+    const userData = await User.findById(user);
+    console.log(userData)
+    if(userData.initialStock <= dosage ){
+      return res.status(400).json({msg: 'Seu estoque não permite essa infusão'})
+    }
+    userData.initialStock -= dosage;
+    userData.save();
     await createdHistory
       .save()
       .then(history => {
