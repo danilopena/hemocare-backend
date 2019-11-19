@@ -32,7 +32,6 @@ router.post("/stock/create", async (req, res) => {
 });
 
 router.post("/stock/add", async (req, res) => {
-  let percentageUsed
   const validationResult = changeStockValidation(req.body);
   if (validationResult.error !== null)
     return res
@@ -48,13 +47,12 @@ router.post("/stock/add", async (req, res) => {
       user.percentageUsed = 0;
     }
     await user.save();
-    percentageUsed = user.percentageUsed;
   } catch (error) {
     return res.status(400).json({ msg: error });
   }
   return res
     .status(200)
-    .json({ msg: `Quantidade ${quantity} adicionada com sucesso`, percentageUsed: percentageUsed });
+    .json({ msg: `Quantidade ${quantity} adicionada com sucesso` });
 });
 router.get("/stock/getStock", async (req, res) => {
   const { userId } = req.query;
@@ -79,6 +77,7 @@ router.get("/stock/getStock", async (req, res) => {
 
 router.post("/stock/subtract", async (req, res) => {
   let percentageUsed;
+  let infusions;
   const validationResult = changeStockValidation(req.body);
   if (validationResult.error !== null)
     return res
@@ -99,13 +98,15 @@ router.post("/stock/subtract", async (req, res) => {
     }
     await user.save();
     percentageUsed = user.percentageUsed;
+    infusions = user.infusions;
+
 
   } catch (error) {
     return res.status(400).json({ msg: error });
   }
   return res
     .status(200)
-    .json({ msg: `Quantidade ${quantity} removida com sucesso`, percentageUsed: percentageUsed });
+    .json({ msg: `Quantidade ${quantity} removida com sucesso`, percentageUsed: percentageUsed, infusions: infusions });
 });
 
 module.exports = router;
