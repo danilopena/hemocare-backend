@@ -95,7 +95,7 @@ router.post("/stock/subtract", async (req, res) => {
       user.infusions += quantity;
       user.initialStock -= quantity;
     }
-    user.save();
+    await user.save();
     percentageUsed = user.percentageUsed;
 
   } catch (error) {
