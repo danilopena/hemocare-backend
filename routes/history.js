@@ -64,7 +64,7 @@ router.get("/getHistory", async (req, res) => {
   let historyFromUser;
   try {
     historyFromUser = await History.find()
-      .where({ user: userId }).sort('date',-1)
+      .where({ user: userId }).sort({ date: 'desc' })
   } catch (error) {
     return res.status(400).json({ msg: `Erro ao buscar histórico ${error}` });
   }
