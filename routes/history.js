@@ -36,8 +36,8 @@ router.post("/create", async (req, res) => {
     }
     userData.initialStock -= dosage;
     userData.infusions += dosage;
-    console.log(userData.percentageUsed)
     await userData.save();
+    console.log(userData.percentageUsed)
 
     await createdHistory
       .save()
