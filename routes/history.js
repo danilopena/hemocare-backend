@@ -65,7 +65,6 @@ router.get("/getHistory", async (req, res) => {
   try {
     historyFromUser = await History.find()
       .where({ user: userId })
-      .populate("user");
   } catch (error) {
     return res.status(400).json({ msg: `Erro ao buscar histórico ${error}` });
   }
