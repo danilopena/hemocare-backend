@@ -83,6 +83,7 @@ router.get("/historyFromMonth", async (req, res) => {
 
   console.log(startDate)
   console.log(endDate)
+  //timezone treating: const znDate = zonedTimeToUtc(parsedDate, 'America/Sao_Paulo');
 
   const infusionsInRange = await History.find({
     infusionDate: { $gte: startDate, $lte: endDate }
