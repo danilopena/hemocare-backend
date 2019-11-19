@@ -35,6 +35,7 @@ router.post("/create", async (req, res) => {
       return res.status(400).json({msg: 'Seu estoque não permite essa infusão'})
     }
     userData.initialStock -= dosage;
+    userData.infusions += dosage;
     userData.save();
     await createdHistory
       .save()
