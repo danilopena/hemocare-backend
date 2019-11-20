@@ -68,7 +68,7 @@ router.get("/getHistory", async (req, res) => {
   } catch (error) {
     return res.status(400).json({ msg: `Erro ao buscar histórico ${error}` });
   }
-
+  console.log(historyFromUser)
   return res.status(200).json({ historyFromUser });
 });
 
