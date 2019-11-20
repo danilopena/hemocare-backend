@@ -26,7 +26,7 @@ const historySchema = mongoose.Schema({
     required: true
   },
   formattedDate: {
-    type: Date,
+    type: String,
     default: null
 
   }
