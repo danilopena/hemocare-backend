@@ -14,7 +14,7 @@ router.post("/register", async (req, res) => {
 
   //check dupliticy
   const emailExists = await User.findOne({ email: req.body.email });
-  if (emailExists) return res.status(400).send("Email ja existe");
+  if (emailExists) return res.status(400).json({msg: "Email ja existe"});
   // hash password
   const { password } = req.body;
   const hashedPassword = await hashPassword(password);
@@ -22,7 +22,6 @@ router.post("/register", async (req, res) => {
   //const {name, email,password} = req.body,
 
   const { name, email, pathology, agreeToTerms } = req.body;
-  console.log(pathology);
 
   //new user
   const user = new User({
@@ -37,6 +36,7 @@ router.post("/register", async (req, res) => {
     const savedUser = await user.save();
     res.send({ user: savedUser });
   } catch (err) {
+    console.log(err)
     res.status(400).json({ msg: `Erro ao registrar usuário. Tente novamente em alguns momentos.` });
   }
 });
