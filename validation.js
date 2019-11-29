@@ -3,14 +3,14 @@ const Joi = require("@hapi/joi");
 const registerValidation = data => {
   const schema = {
     name: Joi.string()
-      .min(6)
-      .required(),
+      .min(2, 'O nome deve conter no mínimo 2 caracteres.')
+      .required('O nome deve ser informado'),
     email: Joi.string()
       .min(6)
-      .email(),
+      .email('Por gentileza, insira um email válido'),
     password: Joi.string()
-      .min(6)
-      .required(),
+      .min(6, 'A senha deve ter no mínimo 6 caracteres')
+      .required('É obrigatório fornecer uma senha'),
     pathology: Joi.string().required(),
     agreeToTerms: Joi.boolean().required()
   };

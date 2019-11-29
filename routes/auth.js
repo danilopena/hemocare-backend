@@ -36,9 +36,8 @@ router.post("/register", async (req, res) => {
   try {
     const savedUser = await user.save();
     res.send({ user: savedUser });
-  } catch {
-    console.log(err);
-    res.status(400).json({ msg: err });
+  } catch (err) {
+    res.status(400).json({ msg: `Erro ao registrar usuário. ` });
   }
 });
 
