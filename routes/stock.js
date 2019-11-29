@@ -22,7 +22,6 @@ router.post("/stock/create", async (req, res) => {
       user.dosage = dosage;
     }
     user.save();
-    console.log(user);
 
     return res.status(200).json({ msg: "Estoque criado com sucesso" });
   } catch (error) {
