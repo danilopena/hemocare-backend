@@ -34,7 +34,12 @@ router.post("/register", async (req, res) => {
   });
   try {
     const savedUser = await user.save();
-    res.send({ user: savedUser });
+    myJwtToken = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET, {
+      expiresIn: 360000
+    });
+    savedUser.authToken = myJwtToken;
+    savedUser.save();
+    return res.header("auth-token", myJwtToken).json({ jwt_Token: myJwtToken, id: savedUser.id });
   } catch (err) {
     console.log(err)
     res.status(400).json({ msg: `Erro ao registrar usuário. Tente novamente em alguns momentos.` });
