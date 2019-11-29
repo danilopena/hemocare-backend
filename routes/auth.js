@@ -52,10 +52,10 @@ router.post("/login", async (req, res) => {
   if (error) return res.status(400).send(error.details[0].message);
 
   const user = await User.findOne({ email: req.body.email });
-  if (!user) return res.status(400).send("Email does not exists in database");
+  if (!user) return res.status(400).json({msg: 'Suas credenciais não foram encontradas no nosso servidor. Revise os dados de login.' });
   // pass is correct?
   const validPass = await bcrypt.compare(req.body.password, user.password);
-  if (!validPass) return res.status(400).send("Invalid Password");
+  if (!validPass) return res.status(400).send("Acho que você esqueceu sua senha.");
 
   // create and assign token jwt
   myJwtToken = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET, {
@@ -74,7 +74,7 @@ router.post("/forgotPassword", async (req, res, next) => {
   console.log(`Email> ${email}`);
 
   if (email === "") {
-    res.json("email required");
+    res.json({msg: 'É necessário informar um email. Tente novamente... '});
   }
   await User.findOne({
     email
@@ -82,8 +82,7 @@ router.post("/forgotPassword", async (req, res, next) => {
     //console.log(user);
 
     if (user === null) {
-      console.log("email not in database");
-      res.json("email not in db");
+      res.json({msg: 'Suas credenciais não foram encontradas no nosso banco de dados. Tente novamente.'});
     } else {
       const token = crypto.randomBytes(20).toString("hex");
       console.log(`Token de recovery eh> ${token}`);
@@ -101,27 +100,26 @@ router.post("/resetPassword", async (req, res) => {
 
   try {
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).send({ error: "User not found" });
+    if (!user) return res.status(400).send({ msg: 'Não existe usuário associado a esse email em nosso banco de dados.' });
     if (token !== user.resetPasswordToken) {
       // it do not records resetToke on mongo db atlas
-      console.log(`Token> ${token} && Reset Token> ${user.resetPasswordToken}`);
-      return res.status(400).send({ error: "Invalid token" });
+      return res.status(400).send({ msg: "Não foi possível encontrar esse token de redefinição. Tente novamente." });
     }
 
     const rightNow = Date.now();
     if (rightNow > user.resetPasswordExpires)
       return res
         .status(400)
-        .send({ error: "Token expired, generate a new one" });
+        .json({ msg: "Esse token de redefinição está expirado. Tente gerar um novo token. " });
 
     user.password = await hashPassword(password);
     await user
       .save()
       .then(() =>
-        res.status(200).send({ msg: "User password updated successfuly!" })
+        res.status(200).send({ msg: "Usuário atualizado com sucesso." })
       );
   } catch (error) {
-    res.status(400).send("Not found");
+    res.status(400).json({msg: "Falha ao atualizar o usuário"});
   }
 });
 
@@ -132,12 +130,13 @@ router.post("/logoff", async (req, res) => {
 
   try {
     await User.find({ email }).then(user => {
-      if (!user) return res.status(401).send({ error: "User not found" });
+      if (!user) return res.status(401).json({ msg: "Credenciais não encontradas no nosso banco de dados." });
       jwt.verify(user.authToken, process.env.TOKEN_SECRET);
     });
-    res.status(200).send({ msg: "User logoff succeeded" });
+    res.status(200).json({ msg: "Usuário deslogado com sucesso." });
   } catch (error) {
     console.log(error);
+    res.status(400).json({msg: 'Erro ao deslogar o usuário. Tente novamente em alguns instantes'})
   }
 });
 
