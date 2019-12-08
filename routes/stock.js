@@ -61,13 +61,13 @@ router.get("/stock/getStock", async (req, res) => {
   try {
     if (user) {
       const quantity = user.initialStock;
-      res.status(200).json({
+      return res.status(200).json({
         quantity: quantity,
         infusions: user.infusions,
         percentageUsed: user.percentageUsed
       });
     } else {
-      res.status(400).json({ msg: "Erro ao consultar estoque" });
+      return res.status(400).json({ msg: "Erro ao consultar estoque" });
     }
   } catch (error) {
     return res.status(400).json({ msg: error });
