@@ -59,9 +59,9 @@ const userSchema = mongoose.Schema({
     default: 0
   }
 });
-userSchema.pre("save", function(next) {
+userSchema.pre("save", function (next) {
   this.percentageUsed =
-    (this.infusions * 100) / (this.initialStock + this.infusions);
+    (this.infusions * 100.0) / (this.initialStock + this.infusions);
   next();
 });
 module.exports = mongoose.model("User", userSchema);
