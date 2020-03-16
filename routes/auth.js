@@ -100,6 +100,9 @@ router.post("/forgotPassword", async (req, res, next) => {
     }
   });
 });
+
+
+//forgot password
 router.post("/resetPassword", async (req, res) => {
   const { email, token, password } = req.body;
 
@@ -114,15 +117,15 @@ router.post("/resetPassword", async (req, res) => {
     const rightNow = Date.now();
     if (rightNow > user.resetPasswordExpires)
       return res
-        .status(400)
-        .json({ msg: "Esse token de redefinição está expirado. Tente gerar um novo token. " });
+          .status(400)
+          .json({ msg: "Esse token de redefinição está expirado. Tente gerar um novo token. " });
 
     user.password = await hashPassword(password);
     await user
-      .save()
-      .then(() =>
-        res.status(200).send({ msg: "Usuário atualizado com sucesso." })
-      );
+        .save()
+        .then(() =>
+            res.status(200).send({ msg: "Usuário atualizado com sucesso." })
+        );
   } catch (error) {
     res.status(400).json({msg: "Falha ao atualizar o usuário"});
   }
