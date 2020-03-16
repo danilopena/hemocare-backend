@@ -6,7 +6,9 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const mailer = require("nodemailer");
+const hbs = require('nodemailer-express-handlebars')
 let myJwtToken = "";
+let path = require('path');
 
 router.post("/register", async (req, res) => {
   const { error } = registerValidation(req.body);
@@ -91,15 +93,24 @@ router.post("/forgotPassword", async (req, res, next) => {
     } else {
       const token = crypto.randomBytes(20).toString("hex");
       console.log(`Token de recovery eh> ${token}`);
-      user.resetPasswordToken = token;
-      user.resetPasswordExpires = Date.now() + 3600000;
-      user.save();
+      // user.resetPasswordToken = token;
+      // user.resetPasswordExpires = Date.now() + 3600000;
+      const now = new Date()
+      now.setHours(now.getHours() + 2)
+       User.findByIdAndUpdate(user.id, {
+        '$set': {
+          resetPasswordToken: token,
+          resetPasswordExpires: now
+        }
+      }).then((response) => console.log(response))
 
       // call mail
       sendMail(email, token, res);
     }
   });
 });
+
+
 
 
 //forgot password
@@ -148,6 +159,9 @@ router.post("/logoff", async (req, res) => {
   }
 });
 
+router.get('/resetPassword', (req, res)=> {
+  res.sendFile(__dirname+'/recover.html')
+})
 function sendMail(email, token, res) {
   const transporter = mailer.createTransport({
     host: process.env.EMAIL_HOST,
@@ -163,11 +177,16 @@ function sendMail(email, token, res) {
     context: { token },
     subject: "Redefinição de senha",
     text:
-      "Vc esta recebendo este link porque voce ou outra pessoa requisitou que a senha do email seja resetada" +
-      "Clique no link abaixo ou cole na barra de endereço do browser para completar o processo de redefinição " +
-      `https://hemocare-backend-new.herokuapp.com/api/user/resetPassword/${token}` +
+      "Voce esta recebendo este link porque voce ou outra pessoa requisitou que a senha do email seja resetada\n" +
+      "Clique no link abaixo ou cole na barra de endereço do browser para completar o processo de redefinição \n" +
+      `https://hemocare-backend-new.herokuapp.com/api/user/resetPassword?token=${token}` +
       " Se você não solicitou essa redefinição, por gentileza ignorar. Sua senha continuará a mesma"
   };
+  transporter.use('compile', hbs({
+    viewEngine: 'handlebars',
+    viewPath: path.resolve('./src/resources/mail'),
+    extName: '.html'
+  }))
   transporter.sendMail(mailOptions, function(err, response) {
     if (err) {
       console.log(err);
