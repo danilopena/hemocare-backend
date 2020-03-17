@@ -130,7 +130,6 @@ router.post("/forgotPassword", async (req, res, next) => {
 //forgot password
 router.post("/resetPassword", async (req, res) => {
   const { email, token, password } = req.body;
-  console.log(req.body);
   console.log(`No reset: ${email} and ${token} `);
 
   try {
@@ -140,6 +139,7 @@ router.post("/resetPassword", async (req, res) => {
         msg:
           "Não existe usuário associado a esse email em nosso banco de dados."
       });
+    console.log(user.resetPasswordToken);
     if (token !== user.resetPasswordToken) {
       // it do not records resetToke on mongo db atlas
       return res.status(400).send({
