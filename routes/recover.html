@@ -64,6 +64,8 @@
           };
           $.ajax({
             type: "POST",
+            dataType: "json",
+            contentType: "application/json",
             url:
               "https://hemocare-backend.herokuapp.com/api/user/resetPassword",
             data: JSON.stringify(data),
