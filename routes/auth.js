@@ -182,11 +182,7 @@ function sendMail(email, token, res) {
       `https://hemocare-backend-new.herokuapp.com/api/user/resetPassword/?token=${token}` +
       " Se você não solicitou essa redefinição, por gentileza ignorar. Sua senha continuará a mesma"
   };
-  transporter.use('compile', hbs({
-    viewEngine: 'handlebars',
-    viewPath: path.resolve('./src/resources/mail'),
-    extName: '.html'
-  }))
+
   transporter.sendMail(mailOptions, function(err, response) {
     if (err) {
       console.log(err);
