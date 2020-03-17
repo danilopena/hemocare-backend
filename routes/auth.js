@@ -6,9 +6,9 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const mailer = require("nodemailer");
-const hbs = require('nodemailer-express-handlebars')
+const hbs = require("nodemailer-express-handlebars");
 let myJwtToken = "";
-let path = require('path');
+let path = require("path");
 
 router.post("/register", async (req, res) => {
   const { error } = registerValidation(req.body);
@@ -16,7 +16,12 @@ router.post("/register", async (req, res) => {
 
   //check dupliticy
   const emailExists = await User.findOne({ email: req.body.email });
-  if (emailExists) return res.status(400).json({msg: "Email já existe na nossa base de dados. Tente redefinir a senha"});
+  if (emailExists)
+    return res
+      .status(400)
+      .json({
+        msg: "Email já existe na nossa base de dados. Tente redefinir a senha"
+      });
   // hash password
   const { password } = req.body;
   const hashedPassword = await hashPassword(password);
@@ -41,10 +46,16 @@ router.post("/register", async (req, res) => {
     });
     savedUser.authToken = myJwtToken;
     savedUser.save();
-    return res.header("auth-token", myJwtToken).json({ jwt_Token: myJwtToken, id: savedUser.id });
+    return res
+      .header("auth-token", myJwtToken)
+      .json({ jwt_Token: myJwtToken, id: savedUser.id });
   } catch (err) {
-    console.log(err)
-    res.status(400).json({ msg: `Erro ao registrar usuário. Tente novamente em alguns momentos.` });
+    console.log(err);
+    res
+      .status(400)
+      .json({
+        msg: `Erro ao registrar usuário. Tente novamente em alguns momentos.`
+      });
   }
 });
 
@@ -59,10 +70,17 @@ router.post("/login", async (req, res) => {
   if (error) return res.status(400).send(error.details[0].message);
 
   const user = await User.findOne({ email: req.body.email });
-  if (!user) return res.status(400).json({msg: 'Suas credenciais não foram encontradas no nosso servidor. Revise os dados de login.' });
+  if (!user)
+    return res
+      .status(400)
+      .json({
+        msg:
+          "Suas credenciais não foram encontradas no nosso servidor. Revise os dados de login."
+      });
   // pass is correct?
   const validPass = await bcrypt.compare(req.body.password, user.password);
-  if (!validPass) return res.status(400).send("Acho que você esqueceu sua senha.");
+  if (!validPass)
+    return res.status(400).send("Acho que você esqueceu sua senha.");
 
   // create and assign token jwt
   myJwtToken = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET, {
@@ -72,7 +90,9 @@ router.post("/login", async (req, res) => {
   user.save();
   //console.log(myJwtToken);
 
-  return res.header("auth-token", myJwtToken).json({ jwt_Token: myJwtToken, id: user.id });
+  return res
+    .header("auth-token", myJwtToken)
+    .json({ jwt_Token: myJwtToken, id: user.id });
 });
 
 // forgot-password
@@ -81,7 +101,7 @@ router.post("/forgotPassword", async (req, res, next) => {
   console.log(`Email> ${email}`);
 
   if (email === "") {
-    res.json({msg: 'É necessário informar um email. Tente novamente... '});
+    res.json({ msg: "É necessário informar um email. Tente novamente... " });
   }
   await User.findOne({
     email
@@ -89,20 +109,23 @@ router.post("/forgotPassword", async (req, res, next) => {
     //console.log(user);
 
     if (user === null) {
-      res.json({msg: 'Suas credenciais não foram encontradas no nosso banco de dados. Tente novamente.'});
+      res.json({
+        msg:
+          "Suas credenciais não foram encontradas no nosso banco de dados. Tente novamente."
+      });
     } else {
       const token = crypto.randomBytes(20).toString("hex");
       console.log(`Token de recovery eh> ${token}`);
       // user.resetPasswordToken = token;
       // user.resetPasswordExpires = Date.now() + 3600000;
-      const now = new Date()
-      now.setHours(now.getHours() + 2)
-       User.findByIdAndUpdate(user.id, {
-        '$set': {
+      const now = new Date();
+      now.setHours(now.getHours() + 2);
+      User.findByIdAndUpdate(user.id, {
+        $set: {
           resetPasswordToken: token,
           resetPasswordExpires: now
         }
-      }).then((response) => console.log(response))
+      }).then(response => console.log(response));
 
       // call mail
       sendMail(email, token, res);
@@ -110,36 +133,48 @@ router.post("/forgotPassword", async (req, res, next) => {
   });
 });
 
-
-
-
 //forgot password
 router.post("/resetPassword", async (req, res) => {
   const { email, token, password } = req.body;
-  console.log(`No reset: ${email} and ${token} `)
+  console.log(`Body: `${req.body});
+  console.log(`No reset: ${email} and ${token} `);
 
   try {
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).send({ msg: 'Não existe usuário associado a esse email em nosso banco de dados.' });
+    if (!user)
+      return res
+        .status(400)
+        .send({
+          msg:
+            "Não existe usuário associado a esse email em nosso banco de dados."
+        });
     if (token !== user.resetPasswordToken) {
       // it do not records resetToke on mongo db atlas
-      return res.status(400).send({ msg: "Não foi possível encontrar esse token de redefinição. Tente novamente." });
+      return res
+        .status(400)
+        .send({
+          msg:
+            "Não foi possível encontrar esse token de redefinição. Tente novamente."
+        });
     }
 
     const rightNow = Date.now();
     if (rightNow > user.resetPasswordExpires)
       return res
-          .status(400)
-          .json({ msg: "Esse token de redefinição está expirado. Tente gerar um novo token. " });
+        .status(400)
+        .json({
+          msg:
+            "Esse token de redefinição está expirado. Tente gerar um novo token. "
+        });
 
     user.password = await hashPassword(password);
     await user
-        .save()
-        .then(() =>
-            res.status(200).send({ msg: "Usuário atualizado com sucesso." })
-        );
+      .save()
+      .then(() =>
+        res.status(200).send({ msg: "Usuário atualizado com sucesso." })
+      );
   } catch (error) {
-    res.status(400).json({msg: "Falha ao atualizar o usuário"});
+    res.status(400).json({ msg: "Falha ao atualizar o usuário" });
   }
 });
 
@@ -150,20 +185,29 @@ router.post("/logoff", async (req, res) => {
 
   try {
     await User.find({ email }).then(user => {
-      if (!user) return res.status(401).json({ msg: "Credenciais não encontradas no nosso banco de dados." });
+      if (!user)
+        return res
+          .status(401)
+          .json({
+            msg: "Credenciais não encontradas no nosso banco de dados."
+          });
       jwt.verify(user.authToken, process.env.TOKEN_SECRET);
     });
     res.status(200).json({ msg: "Usuário deslogado com sucesso." });
   } catch (error) {
     console.log(error);
-    res.status(400).json({msg: 'Erro ao deslogar o usuário. Tente novamente em alguns instantes'})
+    res
+      .status(400)
+      .json({
+        msg: "Erro ao deslogar o usuário. Tente novamente em alguns instantes"
+      });
   }
 });
 
-router.get('/reset', (req, res)=> {
-  console.log(`Dirname heroku: ${__dirname}`)
-  res.sendFile(__dirname+'/recover.html')
-})
+router.get("/reset", (req, res) => {
+  console.log(`Dirname heroku: ${__dirname}`);
+  res.sendFile(__dirname + "/recover.html");
+});
 function sendMail(email, token, res) {
   const transporter = mailer.createTransport({
     host: process.env.EMAIL_HOST,
