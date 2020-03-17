@@ -139,7 +139,7 @@ router.post("/resetPassword", async (req, res) => {
         msg:
           "Não existe usuário associado a esse email em nosso banco de dados."
       });
-    console.log(user);
+    console.log(user.resetPasswordToken);
     if (token !== user.resetPasswordToken) {
       // it do not records resetToke on mongo db atlas
       return res.status(400).send({
@@ -190,7 +190,7 @@ router.post("/logoff", async (req, res) => {
 
 router.get("/reset", (req, res) => {
   console.log(`Dirname heroku: ${__dirname}`);
-  res.sendFile(__dirname + "/recover.html");
+  res.sendFile(__dirname + "recover/recover.html");
 });
 function sendMail(email, token, res) {
   const transporter = mailer.createTransport({
