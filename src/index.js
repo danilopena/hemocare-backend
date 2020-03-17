@@ -7,7 +7,7 @@ const stockRoute = require("../routes/stock");
 const authRoute = require("../routes/auth");
 const postRoute = require("../routes/posts");
 const historyRoute = require("../routes/history");
-const termsRoute = require('../routes/terms')
+const termsRoute = require("../routes/terms");
 //connect
 mongoose.connect(
   process.env.DB_CONNECT,
@@ -16,6 +16,7 @@ mongoose.connect(
 );
 
 app.use(express.json());
+app.use(express.static("recover"));
 
 // middleware
 app.use("/api/user", authRoute);

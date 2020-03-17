@@ -190,7 +190,6 @@ router.post("/logoff", async (req, res) => {
 
 router.get("/reset", (req, res) => {
   console.log(`Dirname heroku: ${__dirname}`);
-  app.use(express.static("recover"));
   res.sendFile(__dirname + "/recover/index.html");
 });
 function sendMail(email, token, res) {
