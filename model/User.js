@@ -24,11 +24,11 @@ const userSchema = mongoose.Schema({
   },
   resetPasswordToken: {
     type: String,
-    select: false
+    select: true
   },
   resetPasswordExpires: {
     type: Date,
-    select: false
+    select: true
   },
   authToken: {
     type: String,
@@ -59,7 +59,7 @@ const userSchema = mongoose.Schema({
     default: 0
   }
 });
-userSchema.pre("save", function (next) {
+userSchema.pre("save", function(next) {
   this.percentageUsed =
     (this.infusions * 100.0) / (this.initialStock + this.infusions);
   next();
