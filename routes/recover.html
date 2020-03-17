@@ -40,7 +40,7 @@
             };
             $.ajax({
                 type: 'POST',
-                url: '/resetPassword',
+                url: 'https://hemocare-backend.herokuapp.com/api/user/resetPassword',
                 data,
                 success: function (data) {
                     window.alert(data.message);
