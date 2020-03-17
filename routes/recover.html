@@ -23,6 +23,7 @@
 <script>
     function resetPassword() {
         var token = document.location.href.split('token=')[1];
+        window.alert(token)
         var password = document.forms[0].elements[0].value;
         var verifiedPassword =  document.forms[0].elements[1].value;
 
