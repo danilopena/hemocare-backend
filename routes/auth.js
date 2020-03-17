@@ -159,7 +159,7 @@ router.post("/logoff", async (req, res) => {
   }
 });
 
-router.get('/resetPassword', (req, res)=> {
+router.get('/reset', (req, res)=> {
   console.log(`Dirname heroku: ${__dirname}`)
   res.sendFile(__dirname+'/recover.html')
 })
@@ -180,7 +180,7 @@ function sendMail(email, token, res) {
     text:
       "Voce esta recebendo este link porque voce ou outra pessoa requisitou que a senha do email seja resetada\n" +
       "Clique no link abaixo ou cole na barra de endereço do browser para completar o processo de redefinição \n" +
-      `https://hemocare-backend-new.herokuapp.com/api/user/resetPassword/?token=${token}/` +
+      `https://hemocare-backend-new.herokuapp.com/api/user/reset/?token=${token}/` +
       "\n\n Se você não solicitou essa redefinição, por gentileza ignorar. Sua senha continuará a mesma"
   };
 
