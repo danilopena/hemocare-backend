@@ -17,11 +17,9 @@ router.post("/register", async (req, res) => {
   //check dupliticy
   const emailExists = await User.findOne({ email: req.body.email });
   if (emailExists)
-    return res
-      .status(400)
-      .json({
-        msg: "Email já existe na nossa base de dados. Tente redefinir a senha"
-      });
+    return res.status(400).json({
+      msg: "Email já existe na nossa base de dados. Tente redefinir a senha"
+    });
   // hash password
   const { password } = req.body;
   const hashedPassword = await hashPassword(password);
@@ -51,11 +49,9 @@ router.post("/register", async (req, res) => {
       .json({ jwt_Token: myJwtToken, id: savedUser.id });
   } catch (err) {
     console.log(err);
-    res
-      .status(400)
-      .json({
-        msg: `Erro ao registrar usuário. Tente novamente em alguns momentos.`
-      });
+    res.status(400).json({
+      msg: `Erro ao registrar usuário. Tente novamente em alguns momentos.`
+    });
   }
 });
 
@@ -71,12 +67,10 @@ router.post("/login", async (req, res) => {
 
   const user = await User.findOne({ email: req.body.email });
   if (!user)
-    return res
-      .status(400)
-      .json({
-        msg:
-          "Suas credenciais não foram encontradas no nosso servidor. Revise os dados de login."
-      });
+    return res.status(400).json({
+      msg:
+        "Suas credenciais não foram encontradas no nosso servidor. Revise os dados de login."
+    });
   // pass is correct?
   const validPass = await bcrypt.compare(req.body.password, user.password);
   if (!validPass)
@@ -136,36 +130,30 @@ router.post("/forgotPassword", async (req, res, next) => {
 //forgot password
 router.post("/resetPassword", async (req, res) => {
   const { email, token, password } = req.body;
-  console.log(`Body: `${req.body});
+  console.log(req.body);
   console.log(`No reset: ${email} and ${token} `);
 
   try {
     const user = await User.findOne({ email });
     if (!user)
-      return res
-        .status(400)
-        .send({
-          msg:
-            "Não existe usuário associado a esse email em nosso banco de dados."
-        });
+      return res.status(400).send({
+        msg:
+          "Não existe usuário associado a esse email em nosso banco de dados."
+      });
     if (token !== user.resetPasswordToken) {
       // it do not records resetToke on mongo db atlas
-      return res
-        .status(400)
-        .send({
-          msg:
-            "Não foi possível encontrar esse token de redefinição. Tente novamente."
-        });
+      return res.status(400).send({
+        msg:
+          "Não foi possível encontrar esse token de redefinição. Tente novamente."
+      });
     }
 
     const rightNow = Date.now();
     if (rightNow > user.resetPasswordExpires)
-      return res
-        .status(400)
-        .json({
-          msg:
-            "Esse token de redefinição está expirado. Tente gerar um novo token. "
-        });
+      return res.status(400).json({
+        msg:
+          "Esse token de redefinição está expirado. Tente gerar um novo token. "
+      });
 
     user.password = await hashPassword(password);
     await user
@@ -186,21 +174,17 @@ router.post("/logoff", async (req, res) => {
   try {
     await User.find({ email }).then(user => {
       if (!user)
-        return res
-          .status(401)
-          .json({
-            msg: "Credenciais não encontradas no nosso banco de dados."
-          });
+        return res.status(401).json({
+          msg: "Credenciais não encontradas no nosso banco de dados."
+        });
       jwt.verify(user.authToken, process.env.TOKEN_SECRET);
     });
     res.status(200).json({ msg: "Usuário deslogado com sucesso." });
   } catch (error) {
     console.log(error);
-    res
-      .status(400)
-      .json({
-        msg: "Erro ao deslogar o usuário. Tente novamente em alguns instantes"
-      });
+    res.status(400).json({
+      msg: "Erro ao deslogar o usuário. Tente novamente em alguns instantes"
+    });
   }
 });
 
