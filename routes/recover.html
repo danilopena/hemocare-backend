@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Reset Password Page</title>
+    <title>Pagina de redefinicao de senha</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
           crossorigin="anonymous">
     <link href="assets/css/main.css" rel="stylesheet">
@@ -18,11 +18,12 @@
     <input type="password" id="password" class="form-control" placeholder="Senha" required autofocus>
     <label for="verifiedPassword" class="sr-only">Confirmar senha</label>
     <input type="password" id="verifiedPassword" class="form-control" placeholder="Confirmar senha" required>
-    <a class="btn btn-lg btn-primary btn-block" onClick="resetPassword()">REDEFINIR</a>
+    <a class="btn btn-lg btn-primary btn-block" style="color: #fff" onClick="resetPassword()">REDEFINIR</a>
 </form>
 <script>
     function resetPassword() {
         var token = document.location.href.split('token=')[1];
+        var email = document.location.href.split('email=')[1];
         window.alert(token)
         var password = document.forms[0].elements[0].value;
         var verifiedPassword =  document.forms[0].elements[1].value;
@@ -30,7 +31,7 @@
         if (password !== verifiedPassword) {
             window.alert('As senhas devem ser iguais');
         } else {
-            window.alert(token);
+            window.alert(`Email eh ${email}`);
             var data = {
                 password: password,
                 verifiedPassword: verifiedPassword,
