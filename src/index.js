@@ -16,7 +16,7 @@ mongoose.connect(
 );
 
 app.use(express.json());
-app.use(express.static("public"));
+app.use("api/user/reset", express.static(__dirname + "public"));
 
 // middleware
 app.use("/api/user", authRoute);
