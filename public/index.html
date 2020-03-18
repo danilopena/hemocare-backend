@@ -72,7 +72,6 @@
         var token = document.location.href.split("token=")[1];
         var email = document.location.href.split("email=")[1];
         token = token.split("&")[0];
-        window.alert(token);
         var password = document.forms[0].elements[0].value;
         var verifiedPassword = document.forms[0].elements[1].value;
 
@@ -89,9 +88,10 @@
             dataType: "json",
             contentType: "application/json",
             url:
-              "https://hemocare-backend.herokuapp.com/api/user/resetPassword",
+              "http://localhost:3000/api/user/resetPassword",
             data: JSON.stringify(data),
-            success: function(data) {
+            dataType: "json",
+            success: function() {
               window.alert(
                 "Pronto, sua senha foi alterada. Volte ao app e efetue login."
               );
