@@ -13,6 +13,7 @@ const mailer = require("nodemailer");
 const hbs = require("nodemailer-express-handlebars");
 let myJwtToken = "";
 let path = require("path");
+const { parseISO, format, isAfter } = require("date-fns");
 
 router.post("/register", async (req, res) => {
   const { error } = registerValidation(req.body);
@@ -155,7 +156,8 @@ router.post("/resetPassword", async (req, res) => {
     }
 
     const rightNow = Date.now();
-    if (rightNow > user.resetPasswordExpires)
+
+    if (!isAfter(rightNow, user.resetPasswordExpires))
       return res.status(400).json({
         msg:
           "Esse token de redefinição está expirado. Tente gerar um novo token. "
