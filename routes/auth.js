@@ -1,7 +1,11 @@
 const express = require("express");
 const User = require("../model/User");
 const router = express.Router();
-const { registerValidation, loginValidation } = require("../validation");
+const {
+  registerValidation,
+  loginValidation,
+  passwordValidation
+} = require("../validation");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
@@ -129,41 +133,46 @@ router.post("/forgotPassword", async (req, res, next) => {
 
 //forgot password
 router.post("/resetPassword", async (req, res) => {
-  const { email, token, password } = req.body;
+  console.log(req.body);
+  const { password } = req.body;
+  console.log(`This is my password: ${password}`);
+  const { error } = passwordValidation(password);
+  if (error) return res.status(400).json({ msg: error });
+  const { email, token } = req.body;
   console.log(`No reset: ${email} and ${token} `);
 
-  try {
-    const user = await User.findOne({ email });
-    if (!user)
-      return res.status(400).send({
-        msg:
-          "Não existe usuário associado a esse email em nosso banco de dados."
-      });
-    console.log(user.resetPasswordToken);
-    if (token !== user.resetPasswordToken) {
-      // it do not records resetToke on mongo db atlas
-      return res.status(400).send({
-        msg:
-          "Não foi possível encontrar esse token de redefinição. Tente novamente."
-      });
-    }
+  // try {
+  //   const user = await User.findOne({ email });
+  //   if (!user)
+  //     return res.status(400).send({
+  //       msg:
+  //         "Não existe usuário associado a esse email em nosso banco de dados."
+  //     });
+  //   console.log(user.resetPasswordToken);
+  //   if (token !== user.resetPasswordToken) {
+  //     // it do not records resetToke on mongo db atlas
+  //     return res.status(400).send({
+  //       msg:
+  //         "Não foi possível encontrar esse token de redefinição. Tente novamente."
+  //     });
+  //   }
 
-    const rightNow = Date.now();
-    if (rightNow > user.resetPasswordExpires)
-      return res.status(400).json({
-        msg:
-          "Esse token de redefinição está expirado. Tente gerar um novo token. "
-      });
+  //   const rightNow = Date.now();
+  //   if (rightNow > user.resetPasswordExpires)
+  //     return res.status(400).json({
+  //       msg:
+  //         "Esse token de redefinição está expirado. Tente gerar um novo token. "
+  //     });
 
-    user.password = await hashPassword(password);
-    await user
-      .save()
-      .then(() =>
-        res.status(200).send({ msg: "Usuário atualizado com sucesso." })
-      );
-  } catch (error) {
-    res.status(400).json({ msg: "Falha ao atualizar o usuário" });
-  }
+  //   user.password = await hashPassword(password);
+  //   await user
+  //     .save()
+  //     .then(() =>
+  //       res.status(200).send({ msg: "Usuário atualizado com sucesso." })
+  //     );
+  // } catch (error) {
+  //   res.status(400).json({ msg: "Falha ao atualizar o usuário" });
+  // }
 });
 
 router.post("/logoff", async (req, res) => {
