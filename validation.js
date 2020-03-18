@@ -56,13 +56,22 @@ const loginValidation = data => {
 };
 const passwordValidation = data => {
   const schema = {
+    email: Joi.string()
+      .error(() => {
+        return {
+          message: "Seu password deve ser uma string"
+        };
+      })
+      .min(6)
+      .email(),
     password: Joi.string()
       .min(6)
       .error(() => {
         return {
           message: "Insira pelo menos 6 caracteres para a sua senha"
         };
-      })
+      }),
+    token: Joi.string()
   };
   return Joi.validate(data, schema);
 };
