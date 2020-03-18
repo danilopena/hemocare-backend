@@ -88,10 +88,8 @@
             dataType: "json",
             contentType: "application/json",
             url:
-              "https://hemocare-backend.herokuapp.com/api/user/resetPassword",
+              "http://localhost:3000/api/user/resetPassword",
             data: JSON.stringify(data),
-            dataType: "json",
-            
             success: function( data) {
               console.log(data)
               window.alert(
@@ -100,6 +98,7 @@
             },
             error: function(xhr) {
               console.log(xhr)
+
               window.alert(
                 "Ops, parece que algo de errado aconteceu. Tente novamente mais tarde ou entre em contato com a equipe."
               );

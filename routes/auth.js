@@ -13,7 +13,7 @@ const mailer = require("nodemailer");
 const hbs = require("nodemailer-express-handlebars");
 let myJwtToken = "";
 let path = require("path");
-const { parseISO, format, isAfter } = require("date-fns");
+const { parseISO, format, zonedTimeToUtc, isBefore } = require("date-fns");
 
 router.post("/register", async (req, res) => {
   const { error } = registerValidation(req.body);
@@ -69,15 +69,17 @@ router.post("/login", async (req, res) => {
   // validate data
   const { error } = loginValidation(req.body);
   if (error) return res.status(400).send(error.details[0].message);
-
-  const user = await User.findOne({ email: req.body.email });
+  const { email, password } = req.body
+  console.log(`${email} e pass: ${password}"`)
+  const user = await User.findOne({ email });
   if (!user)
     return res.status(400).json({
       msg:
         "Suas credenciais não foram encontradas no nosso servidor. Revise os dados de login."
     });
+  console.log(`Minha pass ${user.password} & req pass ${password}`)
   // pass is correct?
-  const validPass = await bcrypt.compare(req.body.password, user.password);
+  const validPass = await bcrypt.compare(password, user.password);
   if (!validPass)
     return res.status(400).send("Acho que você esqueceu sua senha.");
 
@@ -138,9 +140,9 @@ router.post("/resetPassword", async (req, res) => {
   if (error) return res.status(400).json({ msg: error.details[0].message });
   const { password, email, token } = req.body;
   console.log(`No reset: ${email} and ${token} `);
-
+  let user
   try {
-    const user = await User.findOne({ email });
+    user = await User.findOne({ email });
     if (!user)
       return res.status(400).send({
         msg:
@@ -155,22 +157,28 @@ router.post("/resetPassword", async (req, res) => {
       });
     }
 
-    const rightNow = Date.now();
 
-    if (!isAfter(rightNow, user.resetPasswordExpires))
+    // se agora nao for antes da data de expiracao do token
+    if (!isBefore(Date.now(), user.resetPasswordExpires)) {
+
+
       return res.status(400).json({
         msg:
           "Esse token de redefinição está expirado. Tente gerar um novo token. "
       });
+    }
 
-    user.password = await hashPassword(password);
+
+
+    const newPassword = await hashPassword(password)
+    user.password = newPassword
     await user
       .save()
       .then(() =>
         res.status(200).send({ msg: "Usuário atualizado com sucesso." })
       );
   } catch (error) {
-    res.status(400).json({ msg: "Falha ao atualizar o usuário" });
+    res.status(400).json({ msg: `Falha ao atualizar o usuário ${error}` });
   }
 });
 
@@ -220,7 +228,7 @@ function sendMail(email, token, res) {
       "\n\n Se você não solicitou essa redefinição, por gentileza ignorar. Sua senha continuará a mesma"
   };
 
-  transporter.sendMail(mailOptions, function(err, response) {
+  transporter.sendMail(mailOptions, function (err, response) {
     if (err) {
       console.log(err);
     } else {
