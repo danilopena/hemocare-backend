@@ -189,8 +189,7 @@ router.post("/logoff", async (req, res) => {
 });
 
 router.get("/reset", (req, res) => {
-  console.log(`Dirname heroku: ${__dirname}`);
-  res.sendFile(path.resolve(__dirname, "..", "public", "index.html"));
+  res.sendFile(path.resolve(__dirname, "..", "public"));
 });
 function sendMail(email, token, res) {
   const transporter = mailer.createTransport({
