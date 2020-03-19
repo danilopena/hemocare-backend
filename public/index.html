@@ -79,29 +79,32 @@
         if (password !== verifiedPassword) {
           window.alert("As senhas devem ser iguais");
         } else {
-          var data = {
-            password: password,
-            email: email,
-            token: token
-          }; 
-          const response =  changeUserPassword(data)
-          window.alert(response.data)
+            var data = {
+              password: password,
+              email: email,
+              token: token
+            }; 
+            const response = await  changeUserPassword(data)
+            console.log(response)
+            window.alert(response.data)
 
         
             
           };
           
         }
-        const changeUserPassword = async (data) => {
-          const response = await fetch('https://hemocare-backend.herokuapp.com/api/user/resetPassword', {
+        async function changeUserPassword(data) {
+           const response = await fetch('https://hemocare-backend.herokuapp.com/api/user/resetPassword', {
             method: 'POST', 
             body: data,
             headers: {
               'Content-Type': 'application/json'
             }
           })
+          console.log(`Response on function ${response}`)
           return response
         }
+       
       
     </script>
   </body>

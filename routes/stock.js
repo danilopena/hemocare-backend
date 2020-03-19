@@ -1,12 +1,13 @@
-const express = require("express");
-const User = require("../model/User");
+const express = require('express');
+const User = require('../model/User');
+
 const router = express.Router();
 const {
   stockValidation,
-  changeStockValidation
-} = require("../stockValidations");
+  changeStockValidation,
+} = require('../stockValidations');
 
-router.post("/stock/create", async (req, res) => {
+router.post('/stock/create', async (req, res) => {
   const validationResult = stockValidation(req.body);
   if (validationResult.error !== null) {
     return res
@@ -23,19 +24,20 @@ router.post("/stock/create", async (req, res) => {
     }
     user.save();
 
-    return res.status(200).json({ msg: "Estoque criado com sucesso" });
+    return res.status(200).json({ msg: 'Estoque criado com sucesso' });
   } catch (error) {
     console.log(error);
     return res.status(400).json({ msg: error });
   }
 });
 
-router.post("/stock/add", async (req, res) => {
+router.post('/stock/add', async (req, res) => {
   const validationResult = changeStockValidation(req.body);
-  if (validationResult.error !== null)
+  if (validationResult.error !== null) {
     return res
       .status(400)
       .json({ msg: validationResult.error.details[0].message });
+  }
   const { userId } = req.query;
   const { quantity } = req.body;
   try {
@@ -53,7 +55,7 @@ router.post("/stock/add", async (req, res) => {
     .status(200)
     .json({ msg: `Quantidade ${quantity} adicionada com sucesso` });
 });
-router.get("/stock/getStock", async (req, res) => {
+router.get('/stock/getStock', async (req, res) => {
   const { userId } = req.query;
   console.log(userId);
   const user = await User.findById(userId);
@@ -62,26 +64,26 @@ router.get("/stock/getStock", async (req, res) => {
     if (user) {
       const quantity = user.initialStock;
       return res.status(200).json({
-        quantity: quantity,
+        quantity,
         infusions: user.infusions,
-        percentageUsed: user.percentageUsed
+        percentageUsed: user.percentageUsed,
       });
-    } else {
-      return res.status(400).json({ msg: "Erro ao consultar estoque" });
     }
+    return res.status(400).json({ msg: 'Erro ao consultar estoque' });
   } catch (error) {
     return res.status(400).json({ msg: error });
   }
 });
 
-router.post("/stock/subtract", async (req, res) => {
+router.post('/stock/subtract', async (req, res) => {
   let percentageUsed;
   let infusions;
   const validationResult = changeStockValidation(req.body);
-  if (validationResult.error !== null)
+  if (validationResult.error !== null) {
     return res
       .status(400)
       .json({ msg: validationResult.error.details[0].message });
+  }
   const { userId } = req.query;
   const { quantity } = req.body;
   try {
@@ -90,7 +92,7 @@ router.post("/stock/subtract", async (req, res) => {
       if (user.initialStock < quantity) {
         return res
           .status(403)
-          .json({ msg: "Quantidade a ser removida é maior que o estoque. Reveja os dados" });
+          .json({ msg: 'Quantidade a ser removida é maior que o estoque. Reveja os dados' });
       }
       user.infusions += quantity;
       user.initialStock -= quantity;
@@ -98,14 +100,12 @@ router.post("/stock/subtract", async (req, res) => {
     await user.save();
     percentageUsed = user.percentageUsed;
     infusions = user.infusions;
-
-
   } catch (error) {
     return res.status(400).json({ msg: error });
   }
   return res
     .status(200)
-    .json({ msg: `Quantidade ${quantity} removida com sucesso`, percentageUsed: percentageUsed, infusions: infusions });
+    .json({ msg: `Quantidade ${quantity} removida com sucesso`, percentageUsed, infusions });
 });
 
 module.exports = router;

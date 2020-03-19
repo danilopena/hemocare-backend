@@ -1,14 +1,15 @@
-const express = require('express')
-const router = express.Router()
-const fs = require('fs')
+const express = require('express');
 
-router.get('/useTerms', (req, res)=>{
-    fs.readFile('./terms.html', function(err, html){
-        if(err){
-            console.log(err)
+const router = express.Router();
+const fs = require('fs');
+
+router.get('/useTerms', (req, res) => {
+    fs.readFile('./terms.html', (err, html) => {
+        if (err) {
+            console.log(err);
         }
-        res.json({texto: html.toString()})
-    })
-})
+        res.json({ texto: html.toString() });
+    });
+});
 
-module.exports = router
+module.exports = router;
