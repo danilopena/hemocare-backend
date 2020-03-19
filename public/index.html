@@ -84,33 +84,23 @@
             email: email,
             token: token
           }; 
-          console.log(`in this sheeet`)
+          const response = await changeUserPassword(data)
+          window.alert(response.data)
 
-          $.ajax({
-            type: "POST",
-            dataType: "json",
-            contentType: "application/json",
-            url:
-              "https://hemocare-backend.herokuapp.com/api/user/resetPassword",
-            data: JSON.stringify(data),
-            success: function( data) {
-              console.log(data)
-              window.alert(
-                "Pronto, sua senha foi alterada. Volte ao app e efetue login."
-              );
-            },
-            error: function(xhr) {
-              console.log(xhr)
-              window.alert(
-                "Ops, parece que algo de errado aconteceu. Tente novamente mais tarde ou entre em contato com a equipe."
-              );
-            },
-            complete: function(){
-              window.alert(`A senha para a conta ${email} foi redefinida com sucesso!`)
-            }
+        
             
           });
           
+        }
+        const changeUserPassword = async (data) => {
+          const response = await fetch('https://hemocare-backend.herokuapp.com/api/user/resetPassword', {
+            method: 'POST', 
+            body: data,
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          return response
         }
       }
     </script>

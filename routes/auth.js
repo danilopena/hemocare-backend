@@ -116,7 +116,6 @@ router.post("/forgotPassword", async (req, res, next) => {
       });
     } else {
       const token = crypto.randomBytes(20).toString("hex");
-      console.log(`Token de recovery eh> ${token}`);
       // user.resetPasswordToken = token;
       // user.resetPasswordExpires = Date.now() + 3600000;
       const now = new Date();
