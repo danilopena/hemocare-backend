@@ -191,7 +191,6 @@ router.post('/resetPassword', async (req, res) => {
           'Não existe usuário associado a esse email em nosso banco de dados.',
       });
     }
-    console.log(user.resetPasswordToken);
     if (token !== user.resetPasswordToken) {
       // it do not records resetToke on mongo db atlas
       return res.status(400).send({

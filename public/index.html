@@ -85,11 +85,7 @@
               token: token
             }; 
             const response =  changeUserPassword(data)
-            console.log(response)
             window.alert(response.data)
-
-        
-            
           };
           
         }
@@ -101,7 +97,7 @@
               'Content-Type': 'application/json'
             }
           })
-          console.log(`Response on function ${response}`)
+          alert(`Response on function ${response}`)
           return response
         }
        
